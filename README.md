@@ -106,7 +106,14 @@ Amounts are plain integers; the `currency.style` decides formatting (`indian-lak
 
 ### Scaling plan (1,000+ concurrent rooms)
 
-- A room is ~30–60 KB of state and a few timers; one Node process comfortably holds several thousand rooms (the load test script measures this). CPU per action is ~0.2 ms in the engine plus JSON serialisation per connected socket.
+Measured on a laptop with `npm run loadtest -w @bt/server` (one human socket + 3 bots per room, server env `CONNECT_RATE_PER_IP=1000`):
+
+| Rooms | Bot pace | State broadcasts/s | Action ack p50 / p95 | Errors |
+| --- | --- | --- | --- | --- |
+| 300 | every 0.3 s (stress) | ~270 | 9 ms / 20 ms | 0 |
+| 1000 | every 1.5 s (realistic) | ~400 | 15 ms / 40 ms | 0 |
+
+- A room is ~30–60 KB of state and a few timers; one Node process holds a few thousand rooms. CPU per action is ~0.2 ms in the engine plus JSON serialisation per connected socket (the dominant cost at scale).
 - Horizontal: run N server processes behind a sticky load balancer, add `@socket.io/redis-adapter`, and shard rooms by code (`hash(code) % N`) so a room always lives on one process. Snapshots in Postgres/Redis let any process resume a room.
 - Send-side cost is dominated by broadcasting the full `GameState` (~20–40 KB) per change; if needed switch to JSON patches (immer already produces them) — the client store would apply patches instead of replacing state.
 - Keep SQLite for a single box; move to Postgres (adapter stub provided) for multi-node.

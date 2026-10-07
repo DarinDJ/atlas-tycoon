@@ -22,6 +22,8 @@ export const config = {
   /** Seconds a disconnected player keeps their seat before auto-actions kick in regardless of the turn timer. */
   reconnectGraceSeconds: Number(env.RECONNECT_GRACE_SECONDS ?? 45),
   maxRooms: Number(env.MAX_ROOMS ?? 5000),
+  /** New socket connections allowed per IP per second (burst = 5x). Raise for load tests / NAT-heavy audiences. */
+  connectRatePerIp: Number(env.CONNECT_RATE_PER_IP ?? 2),
   analyticsAdapter: env.ANALYTICS_ADAPTER ?? 'console',
   analyticsEndpoint: env.ANALYTICS_ENDPOINT ?? '',
   /** When true, /api/store/dev-complete grants entitlements without a real payment. */

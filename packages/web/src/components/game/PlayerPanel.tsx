@@ -69,7 +69,7 @@ export function PlayerCard({ player, game, map, isMe, isCurrent, compact }: Prop
 
   return (
     <div
-      className={`panel relative p-2.5 transition ${isCurrent ? 'ring-2 ring-saffron' : ''} ${player.bankrupt ? 'opacity-50' : ''} ${compact ? 'min-w-[9.5rem]' : ''}`}
+      className={`panel relative p-2.5 transition ${isCurrent ? 'ring-2 ring-saffron' : ''} ${player.bankrupt ? 'opacity-50' : ''} min-w-[13rem] shrink-0 lg:min-w-0`}
       data-testid={`player-${player.id}`}
       style={{ borderLeft: `5px solid ${player.color}` }}
     >

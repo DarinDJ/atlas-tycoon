@@ -54,7 +54,9 @@ async function spawn(i: number): Promise<void> {
   socket.on('room:state', (v: { status: string }) => {
     if (v.status === 'ended') ended++;
   });
-  socket.on('room:error', () => errors++);
+  socket.on('room:error', (e: { code: string }) => {
+    if (e.code !== 'BAD_PHASE' && e.code !== 'NOT_YOUR_TURN') errors++;
+  });
   await ack(socket, 'room:start');
   // The human just lets the timer auto-act; occasionally measure action latency with an endTurn attempt.
   setInterval(() => {

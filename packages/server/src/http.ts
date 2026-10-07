@@ -78,7 +78,14 @@ export function createHttpApp(
 
   app.use(express.json({ limit: '512kb' }));
 
-  app.get('/api/health', (_req, res) => res.json({ ok: true, ...manager.stats(), uptime: process.uptime() }));
+  app.get('/api/health', (_req, res) =>
+    res.json({
+      ok: true,
+      ...manager.stats(),
+      uptime: process.uptime(),
+      memoryMb: Math.round(process.memoryUsage().rss / 1e6),
+    }),
+  );
 
   app.get('/api/config', (_req, res) =>
     res.json({

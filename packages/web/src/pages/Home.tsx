@@ -143,7 +143,7 @@ export default function Home() {
   return (
     <main
       id="main"
-      className="mx-auto flex max-w-5xl flex-col gap-6 px-4 pt-[calc(var(--safe-top)+1rem)] pb-16"
+      className="mx-auto flex w-full max-w-5xl flex-col gap-6 overflow-x-hidden px-4 pt-[calc(var(--safe-top)+1rem)] pb-16"
     >
       <header className="flex items-center justify-between">
         <div>
@@ -206,7 +206,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <button
               className="btn btn-primary"
               disabled={!!busy || mapLocked}
@@ -234,7 +234,7 @@ export default function Home() {
               }}
             >
               <input
-                className="input uppercase"
+                className="input min-w-0 uppercase"
                 placeholder={t('home.roomCode')}
                 value={code}
                 maxLength={8}

@@ -34,7 +34,11 @@ export function Lobby({ room, me, mapSummary, adsEnabled, entitlements, autostar
 
   useEffect(() => setRules(room.rules), [room.rules]);
   useEffect(() => {
-    if (autostart && isHost && room.status === 'lobby') void emit('room:start');
+    if (autostart && isHost && room.status === 'lobby') {
+      void emit('room:start');
+      // Drop the flag so "Play again" returns to the lobby instead of auto-starting again.
+      nav(`/room/${room.code}`, { replace: true });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autostart, isHost]);
 

@@ -79,7 +79,7 @@ export function attachSockets(
   const lobbySubscribers = new Set<Sock>();
   const actionLimiter = new RateLimiter(10, 20);
   const chatLimiter = new RateLimiter(1, 4);
-  const connectLimiter = new RateLimiter(2, 10);
+  const connectLimiter = new RateLimiter(config.connectRatePerIp, config.connectRatePerIp * 5);
   const generalLimiter = new RateLimiter(20, 40);
   setInterval(() => {
     actionLimiter.sweep();
@@ -423,6 +423,4 @@ export function attachSockets(
       generalLimiter.forget(sid);
     });
   });
-
-  void config;
 }

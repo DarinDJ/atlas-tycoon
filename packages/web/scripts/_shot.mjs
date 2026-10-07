@@ -1,0 +1,16 @@
+import { chromium, devices } from '@playwright/test';
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ ...devices['Pixel 5'] });
+const page = await ctx.newPage();
+await page.goto('http://localhost:4173/');
+await page.getByRole('button', { name: 'Accept' }).click().catch(() => {});
+await page.getByTestId('name-input').fill('Shot');
+await page.screenshot({ path: 'test-results/shot-home-mobile.png' });
+await page.getByTestId('play-bots').click();
+await page.getByTestId('game').waitFor({ timeout: 20000 });
+await page.waitForTimeout(4000);
+await page.screenshot({ path: 'test-results/shot-game-mobile.png' });
+await page.locator('[data-tile="39"]').click();
+await page.waitForTimeout(600);
+await page.screenshot({ path: 'test-results/shot-card-mobile.png' });
+await browser.close();
