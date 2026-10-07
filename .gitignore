@@ -4,8 +4,7 @@ coverage/
 *.log
 .env
 .env.local
-data/*.db
-data/*.db-*
+**/data/
 playwright-report/
 test-results/
 dev-dist/
