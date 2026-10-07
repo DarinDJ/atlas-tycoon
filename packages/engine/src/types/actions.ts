@@ -27,7 +27,7 @@ export type SystemAction =
   | { type: 'sys:timeUp' }
   | { type: 'sys:tick'; elapsedMs: number }
   | { type: 'sys:autoAct'; playerId: string }
-  | { type: 'sys:replaceWithBot'; playerId: string; level: BotLevel }
+  | { type: 'sys:setBot'; playerId: string; isBot: boolean; level?: BotLevel }
   | { type: 'sys:setConnected'; playerId: string; connected: boolean };
 
 export type Action = PlayerAction | SystemAction;

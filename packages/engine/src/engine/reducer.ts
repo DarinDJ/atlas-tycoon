@@ -128,11 +128,12 @@ function dispatch(ctx: Ctx, action: Action): void {
       return doTick(ctx, action.elapsedMs);
     case 'sys:autoAct':
       return doAutoAct(ctx, action.playerId);
-    case 'sys:replaceWithBot': {
+    case 'sys:setBot': {
       const p = findPlayer(s, action.playerId);
-      p.isBot = true;
-      p.botLevel = action.level;
-      emit(ctx, { type: 'replacedByBot', playerId: p.id });
+      p.isBot = action.isBot;
+      p.botLevel = action.isBot ? (action.level ?? p.botLevel ?? 'medium') : undefined;
+      if (action.isBot) emit(ctx, { type: 'replacedByBot', playerId: p.id });
+      else emit(ctx, { type: 'connection', playerId: p.id, connected: true });
       return;
     }
     case 'sys:setConnected': {
