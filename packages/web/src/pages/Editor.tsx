@@ -220,7 +220,7 @@ export default function Editor() {
                 className="pointer-events-none absolute inset-0 grid"
                 style={{ gridTemplateColumns: 'repeat(1, 1fr)' }}
               >
-                <div className="absolute right-2 bottom-2 rounded bg-white/90 p-1 text-[10px]">
+                <div className="absolute right-2 bottom-2 rounded bg-[var(--panel)]/90 p-1 text-[10px]">
                   Rent heat-map from last simulation: top earners outlined in red
                 </div>
               </div>
@@ -672,7 +672,10 @@ export default function Editor() {
                       </button>
                     </div>
                     {map.cards[deck].map((c, ci) => (
-                      <div key={ci} className="mb-1 flex flex-col gap-1 rounded-lg bg-black/5 p-2">
+                      <div
+                        key={ci}
+                        className="mb-1 flex flex-col gap-1 rounded-lg bg-[var(--panel-muted)] p-2"
+                      >
                         <input
                           className="input"
                           value={c.text}
@@ -746,18 +749,18 @@ export default function Editor() {
 
             {issues.length > 0 && (
               <ul
-                className="max-h-40 overflow-y-auto rounded-lg bg-black/5 p-2 text-xs scrollbar-thin"
+                className="max-h-40 overflow-y-auto rounded-lg bg-[var(--panel-muted)] p-2 text-xs scrollbar-thin"
                 data-testid="issues"
               >
                 {issues.map((i, k) => (
-                  <li key={k} className={i.level === 'error' ? 'text-red-700' : 'text-amber-700'}>
+                  <li key={k} className={i.level === 'error' ? 'text-red-400' : 'text-amber-400'}>
                     {i.level.toUpperCase()} {i.path}: {i.message}
                   </li>
                 ))}
               </ul>
             )}
             {issues.length === 0 && balance && (
-              <p className="text-xs font-semibold text-leaf">✓ Map is valid</p>
+              <p className="text-xs font-semibold text-emerald-400">✓ Map is valid</p>
             )}
             {balance && (
               <div className="text-xs">
@@ -787,14 +790,14 @@ export default function Editor() {
                   </tbody>
                 </table>
                 {balance.warnings.map((w, i) => (
-                  <div key={i} className="text-amber-700">
+                  <div key={i} className="text-amber-400">
                     ⚠ {w}
                   </div>
                 ))}
               </div>
             )}
             {sim && (
-              <div className="rounded-lg bg-black/5 p-2 text-xs" data-testid="sim-report">
+              <div className="rounded-lg bg-[var(--panel-muted)] p-2 text-xs" data-testid="sim-report">
                 <div className="font-bold">
                   Simulation: {sim.games} games ({(sim.elapsedMs / 1000).toFixed(1)}s)
                 </div>

@@ -63,7 +63,7 @@ export function PropertyCard({ index, map, game, legal, me, onClose }: Props) {
                 {t('game.owner')}: <b>{owner.name}</b>
               </span>
               {own?.mortgaged && (
-                <span className="rounded bg-red-100 px-1.5 text-xs text-red-700">{t('game.mortgaged')}</span>
+                <span className="rounded bg-red-100 px-1.5 text-xs text-red-400">{t('game.mortgaged')}</span>
               )}
               {own && own.houses > 0 && (
                 <span className="text-xs">
@@ -95,7 +95,7 @@ export function PropertyCard({ index, map, game, legal, me, onClose }: Props) {
                   <td>🏨 {t('game.hotel')}</td>
                   <td className="text-right tabular-nums">{money(map, tile.rent[5])}</td>
                 </tr>
-                <tr className="border-t border-black/10 opacity-80">
+                <tr className="border-t border-[var(--panel-border)] opacity-80">
                   <td>{t('game.houseCost')}</td>
                   <td className="text-right tabular-nums">{money(map, tile.houseCost)}</td>
                 </tr>
@@ -145,7 +145,7 @@ export function PropertyCard({ index, map, game, legal, me, onClose }: Props) {
           )}
 
           {tileFact(map, index, lang) && (
-            <p className="rounded-lg bg-black/5 p-2 text-xs">
+            <p className="rounded-lg bg-[var(--panel-muted)] p-2 text-xs">
               <b>{t('game.fact')}</b> {tileFact(map, index, lang)}
             </p>
           )}

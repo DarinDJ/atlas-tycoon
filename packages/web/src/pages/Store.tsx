@@ -55,7 +55,7 @@ export default function Store() {
                   <span className="text-xs opacity-60">/ ${(p.priceUsd / 100).toFixed(2)}</span>
                 </span>
                 {owned(p) ? (
-                  <span className="rounded-full bg-leaf/15 px-3 py-1 text-sm font-bold text-leaf">
+                  <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-bold text-emerald-400">
                     ✓ {t('store.owned')}
                   </span>
                 ) : (
@@ -109,10 +109,12 @@ export default function Store() {
       </nav>
       <h1 className="text-2xl font-black">🛍️ {t('store.title')}</h1>
       {purchased && (
-        <div className="rounded-xl bg-leaf/15 p-3 text-sm font-semibold text-leaf">{t('store.thanks')}</div>
+        <div className="rounded-xl bg-emerald-500/15 p-3 text-sm font-semibold text-emerald-400">
+          {t('store.thanks')}
+        </div>
       )}
       {providers.includes('dev') && (
-        <p className="rounded-xl bg-yellow-100 p-2 text-xs">{t('store.testMode')}</p>
+        <p className="rounded-xl bg-amber-500/20 p-2 text-xs">{t('store.testMode')}</p>
       )}
       {section('map', t('store.maps'))}
       {section('cosmetic', t('store.cosmetics'))}

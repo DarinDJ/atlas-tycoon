@@ -37,28 +37,14 @@ export function GameScreen({ room, game, map, legal, me, adsEnabled, entitlement
   const act = useGame((s) => s.act);
   const leave = useGame((s) => s.leaveRoom);
   const unread = useGame((s) => s.unreadChat);
-  const lastEvents = useGame((s) => s.lastEvents);
+  const visual = useGame((s) => s.visual);
   const [tab, setTab] = useState<'log' | 'chat'>('log');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [resignOpen, setResignOpen] = useState(false);
-  const [rollKey, setRollKey] = useState(0);
   const desktop = useMediaQuery('(min-width: 1024px)');
   const myPlayer = me ? game.players.find((p) => p.id === me) : null;
   const isHost = !!me && room.hostId === me;
 
-  useEffect(() => {
-    if (lastEvents.some((e) => e.type === 'rolled')) setRollKey((k) => k + 1);
-  }, [lastEvents]);
-
-  const teleported = useMemo(
-    () =>
-      new Set(
-        lastEvents
-          .filter((e) => e.type === 'moved' && e.teleport)
-          .map((e) => (e as { playerId: string }).playerId),
-      ),
-    [lastEvents],
-  );
   const highlights = useMemo(
     () =>
       game.phase === 'awaitBuy' && game.pendingBuy !== null
@@ -77,7 +63,7 @@ export function GameScreen({ room, game, map, legal, me, adsEnabled, entitlement
       if (e.key === 'r' && legal?.roll) void act({ type: 'roll' });
       if (e.key === 'b' && legal?.buy) void act({ type: 'buy' });
       if (e.key === 'e' && legal?.endTurn) void act({ type: 'endTurn' });
-      if (e.key === 't' && me) openTrade(null);
+      if (e.key === 't' && me) openTrade('*');
       if (e.key === 'Escape') selectTile(null);
     };
     window.addEventListener('keydown', onKey);
@@ -131,14 +117,14 @@ export function GameScreen({ room, game, map, legal, me, adsEnabled, entitlement
             <span className="text-xs opacity-60">· {t('game.spectators', { n: room.spectators })}</span>
           )}
           {game.rules.freeParkingJackpot && game.freeParkingPot > 0 && (
-            <span className="rounded bg-yellow-200 px-1.5 text-xs">☕ {t('game.jackpot')}</span>
+            <span className="rounded bg-amber-400/30 px-1.5 text-xs">☕ {t('game.jackpot')}</span>
           )}
         </div>
         <div className="flex gap-1">
           {me && myPlayer && !myPlayer.bankrupt && (
             <button
               className="btn btn-secondary btn-sm"
-              onClick={() => openTrade(null)}
+              onClick={() => openTrade('*')}
               data-testid="open-trade"
             >
               🤝 <span className="hidden sm:inline">{t('game.trade')}</span>
@@ -180,7 +166,6 @@ export function GameScreen({ room, game, map, legal, me, adsEnabled, entitlement
             map={map}
             isMe={p.id === me}
             isCurrent={p.id === current.id}
-            compact={false}
           />
         ))}
       </div>
@@ -193,11 +178,12 @@ export function GameScreen({ room, game, map, legal, me, adsEnabled, entitlement
           selectedTile={selectedTile}
           onSelect={selectTile}
           highlights={highlights}
-          teleported={teleported}
+          positions={visual.positions}
+          teleport={visual.teleport}
         >
           <div className="flex flex-col items-center gap-2 p-2 text-center text-white drop-shadow">
             <div className="text-[clamp(0.9rem,3cqw,1.6rem)] font-black tracking-tight">{map.name}</div>
-            <Dice dice={game.dice} rollKey={rollKey} />
+            <Dice dice={visual.dice ?? game.dice} rollKey={visual.rollKey} />
             <div className="text-[clamp(0.6rem,2cqw,0.9rem)] font-semibold opacity-90">
               {game.status === 'playing' ? t('game.turnOf', { name: current.name }) : ''}
             </div>
@@ -215,10 +201,9 @@ export function GameScreen({ room, game, map, legal, me, adsEnabled, entitlement
 
       {/* Action bar (sticky bottom on mobile) */}
       <div
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-black/10 bg-white/95 p-2 backdrop-blur lg:static lg:col-span-3 lg:rounded-2xl lg:border"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--panel-border)] bg-[var(--panel)]/95 p-2 backdrop-blur lg:static lg:col-span-3 lg:rounded-2xl lg:border"
         style={{ paddingBottom: 'calc(0.5rem + var(--safe-bottom))' }}
       >
-        {me && <TradeDialog game={game} map={map} me={me} />}
         {game.phase === 'auction' ? (
           <AuctionPanel game={game} map={map} legal={legal} me={me} deadline={room.deadline} />
         ) : (
@@ -226,6 +211,8 @@ export function GameScreen({ room, game, map, legal, me, adsEnabled, entitlement
         )}
       </div>
 
+      {/* Rendered outside the blurred action bar: backdrop-filter would trap the fixed modal. */}
+      {me && <TradeDialog game={game} map={map} me={me} />}
       <PropertyCard
         index={selectedTile}
         map={map}

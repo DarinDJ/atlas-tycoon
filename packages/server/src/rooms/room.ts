@@ -61,7 +61,20 @@ export const PLAYER_COLORS = [
   '#16a085',
   '#d6409b',
 ];
-const BOT_NAMES = ['Arjun', 'Priya', 'Ravi', 'Meera', 'Kabir', 'Anaya', 'Dev', 'Zoya', 'Vikram', 'Isha'];
+const BOT_NAMES = [
+  'Arjun',
+  'Sofia',
+  'Kenji',
+  'Amara',
+  'Lucas',
+  'Priya',
+  'Mateo',
+  'Zoe',
+  'Omar',
+  'Hana',
+  'Diego',
+  'Nia',
+];
 const MAX_CHAT = 100;
 
 export interface RoomSnapshot {

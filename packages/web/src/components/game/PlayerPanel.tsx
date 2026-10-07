@@ -2,11 +2,11 @@ import type { GameState, MapDefinition, Player } from '@bt/engine';
 import { netWorth, ownedTiles } from '@bt/engine';
 import { animate, motion, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { AVATARS, TOKENS, glyphFor } from '../../config/cosmetics';
 import { money, useT } from '../../i18n';
 import { groupColor } from '../../lib/tileArt';
 import { useGame } from '../../store/useGame';
 import { sfx } from '../../lib/audio';
+import { Pawn } from '../Pawn';
 
 /** Animated money counter. */
 export function Money({
@@ -21,24 +21,25 @@ export function Money({
   const mv = useMotionValue(amount);
   const [text, setText] = useState(money(map, amount));
   const prev = useRef(amount);
+  const [flash, setFlash] = useState<'up' | 'down' | null>(null);
   useEffect(() => {
     const from = prev.current;
     prev.current = amount;
     if (from === amount) return;
+    setFlash(amount > from ? 'up' : 'down');
     const ctrl = animate(mv, amount, {
       duration: Math.min(1.2, 0.3 + Math.abs(amount - from) / 2000),
       ease: 'easeOut',
       onUpdate: (v) => setText(money(map, Math.round(v))),
+      onComplete: () => setFlash(null),
     });
     return () => ctrl.stop();
   }, [amount, map, mv]);
   return (
     <motion.span
-      key={amount}
       className={className}
-      initial={{ color: prev.current < amount ? '#128807' : '#dc2626' }}
-      animate={{ color: 'inherit' }}
-      transition={{ duration: 1.2 }}
+      animate={{ color: flash === 'up' ? '#4ade80' : flash === 'down' ? '#f87171' : 'var(--ink)' }}
+      transition={{ duration: 0.4 }}
     >
       {text}
     </motion.span>
@@ -51,10 +52,9 @@ interface Props {
   map: MapDefinition;
   isMe: boolean;
   isCurrent: boolean;
-  compact?: boolean;
 }
 
-export function PlayerCard({ player, game, map, isMe, isCurrent, compact }: Props) {
+export function PlayerCard({ player, game, map, isMe, isCurrent }: Props) {
   const t = useT();
   const tiles = ownedTiles(game, player.id);
   const nw = netWorth(game, map, player.id);
@@ -69,23 +69,16 @@ export function PlayerCard({ player, game, map, isMe, isCurrent, compact }: Prop
 
   return (
     <div
-      className={`panel relative p-2.5 transition ${isCurrent ? 'ring-2 ring-saffron' : ''} ${player.bankrupt ? 'opacity-50' : ''} min-w-[13rem] shrink-0 lg:min-w-0`}
+      className={`panel relative min-w-[13rem] shrink-0 p-2.5 transition lg:min-w-0 ${isCurrent ? 'ring-2 ring-[var(--accent)]' : ''} ${player.bankrupt ? 'opacity-50' : ''}`}
       data-testid={`player-${player.id}`}
       style={{ borderLeft: `5px solid ${player.color}` }}
     >
-      <div className="flex items-center gap-2">
-        <span className="relative text-2xl leading-none" aria-hidden>
-          {glyphFor(AVATARS, player.avatar)}
-          <span className="absolute -right-1.5 -bottom-1 text-xs">{glyphFor(TOKENS, player.token)}</span>
-        </span>
+      <div className="flex items-center gap-2.5">
+        <Pawn avatar={player.avatar} color={player.color} skin={player.token} size={40} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1 truncate text-sm font-bold">
             <span className="truncate">{player.name}</span>
-            {isMe && (
-              <span className="rounded bg-saffron/15 px-1 text-[10px] uppercase text-saffron-dark">
-                {t('app.you')}
-              </span>
-            )}
+            {isMe && <span className="chip text-[10px] uppercase">{t('app.you')}</span>}
             {player.isBot && <span className="text-xs opacity-60">🤖</span>}
             {!player.connected && !player.isBot && <span title={t('game.disconnected')}>🔌</span>}
             {player.inJail && <span title="In jail">🚔</span>}
@@ -96,18 +89,18 @@ export function PlayerCard({ player, game, map, isMe, isCurrent, compact }: Prop
             )}
           </div>
           {player.bankrupt ? (
-            <div className="text-xs font-semibold text-red-600">{t('game.bankrupt')}</div>
+            <div className="text-xs font-semibold text-red-400">{t('game.bankrupt')}</div>
           ) : (
             <div className="flex items-baseline gap-2 text-xs">
               <Money amount={player.cash} map={map} className="text-base font-extrabold tabular-nums" />
-              <span className="opacity-60" title={t('game.netWorth')}>
+              <span className="muted" title={t('game.netWorth')}>
                 ≈ {money(map, nw)}
               </span>
             </div>
           )}
         </div>
         {isWaiting && !player.bankrupt && (
-          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-saffron" title="waiting" />
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[var(--accent)]" title="waiting" />
         )}
         {!isMe && me && !player.bankrupt && (
           <button
@@ -120,7 +113,7 @@ export function PlayerCard({ player, game, map, isMe, isCurrent, compact }: Prop
         )}
       </div>
       {menu && (
-        <div className="absolute top-10 right-2 z-20 flex flex-col gap-1 rounded-xl border border-black/10 bg-white p-1 shadow-xl">
+        <div className="panel absolute top-10 right-2 z-20 flex flex-col gap-1 p-1">
           <button
             className="btn btn-ghost btn-sm justify-start"
             onClick={() => {
@@ -165,7 +158,7 @@ export function PlayerCard({ player, game, map, isMe, isCurrent, compact }: Prop
           )}
         </div>
       )}
-      {!compact && tiles.length > 0 && (
+      {tiles.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1" aria-label={t('game.properties')}>
           {tiles.map((i) => {
             const tile = map.tiles[i]!;
@@ -173,7 +166,7 @@ export function PlayerCard({ player, game, map, isMe, isCurrent, compact }: Prop
             return (
               <button
                 key={i}
-                className="h-4 w-3 rounded-sm border border-black/20 focus-ring"
+                className="h-4 w-3 rounded-sm border border-[var(--panel-border)] focus-ring"
                 style={{
                   background: groupColor(map, tile) ?? '#999',
                   opacity: own.mortgaged ? 0.35 : 1,

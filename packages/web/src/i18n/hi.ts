@@ -2,7 +2,7 @@ import type { Dict } from './en';
 
 /** Hindi. Keys missing here fall back to English. */
 export const hi: Partial<Dict> = {
-  'app.tagline': 'हर नक्शा एक असली जगह है।',
+  'app.tagline': 'दुनिया खरीदो, एक शहर एक बार में।',
   'app.play': 'खेलें',
   'app.cancel': 'रद्द करें',
   'app.close': 'बंद करें',
@@ -27,7 +27,7 @@ export const hi: Partial<Dict> = {
   'app.theme': 'बोर्ड थीम',
   'app.offline': 'दोबारा जुड़ रहे हैं…',
 
-  'home.title': 'भारत टाइकून',
+  'home.title': 'एटलस टाइकून',
   'home.subtitle': 'शहर खरीदो, होटल बनाओ, दोस्तों को दिवालिया करो। मुफ़्त, बिना साइनअप, 2–8 खिलाड़ी।',
   'home.yourName': 'आपका नाम',
   'home.namePlaceholder': 'जैसे अर्जुन',

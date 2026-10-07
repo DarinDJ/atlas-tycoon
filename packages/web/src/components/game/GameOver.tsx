@@ -10,7 +10,7 @@ import { renderShareCard, shareBlob, whatsappUrl } from '../../lib/shareCard';
 import { useGame } from '../../store/useGame';
 import { AdSlot } from '../AdSlot';
 import { Confetti } from '../Confetti';
-import { AVATARS, glyphFor } from '../../config/cosmetics';
+import { Pawn } from '../Pawn';
 
 interface Props {
   game: GameState;
@@ -98,10 +98,10 @@ export function GameOver({ game, map, me, isHost, adsEnabled, entitlements }: Pr
           {ranking.map((p, i) => (
             <li
               key={p.id}
-              className={`flex items-center gap-2 rounded-lg px-2 py-1.5 ${i === 0 ? 'bg-saffron/15 font-bold' : ''}`}
+              className={`flex items-center gap-2 rounded-lg px-2 py-1.5 ${i === 0 ? 'bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] font-bold' : ''}`}
             >
               <span className="w-5 text-right tabular-nums">{i + 1}.</span>
-              <span className="text-lg">{glyphFor(AVATARS, p.avatar)}</span>
+              <Pawn avatar={p.avatar} color={p.color} skin={p.token} size={28} />
               <span className="flex-1 truncate" style={{ color: p.color }}>
                 {p.name}
                 {p.id === me ? ` (${t('app.you')})` : ''}

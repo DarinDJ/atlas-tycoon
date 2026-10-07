@@ -4,10 +4,12 @@ import type { TileGeom } from '../../lib/board';
 import { pathBetween } from '../../lib/board';
 import { sfx } from '../../lib/audio';
 import { useSettings } from '../../store/useSettings';
+import { Pawn } from '../Pawn';
 
 interface Props {
   playerId: string;
-  glyph: string;
+  avatar: string;
+  skin: string;
   color: string;
   position: number;
   /** Set when the last move was a teleport (jail) so we do not hop around the board. */
@@ -19,12 +21,24 @@ interface Props {
   dimmed: boolean;
 }
 
-/** A player token that hops tile-to-tile when its position changes. */
-export function Token({ glyph, color, position, teleport, geoms, dx, dy, active, dimmed, playerId }: Props) {
+/** A pawn that hops tile-to-tile when its (visual) position changes. */
+export function Token({
+  playerId,
+  avatar,
+  skin,
+  color,
+  position,
+  teleport,
+  geoms,
+  dx,
+  dy,
+  active,
+  dimmed,
+}: Props) {
   const reduced = useSettings((s) => s.reducedMotion);
   const x = useMotionValue((geoms[position]?.cx ?? 0) * 100);
   const y = useMotionValue((geoms[position]?.cy ?? 0) * 100);
-  const scale = useMotionValue(1);
+  const lift = useMotionValue(0);
   const left = useMotionTemplate`${x}%`;
   const top = useMotionTemplate`${y}%`;
   const prev = useRef(position);
@@ -36,8 +50,9 @@ export function Token({ glyph, color, position, teleport, geoms, dx, dy, active,
     const n = geoms.length;
     const target = geoms[position]!;
     if (reduced || teleport) {
-      x.set(target.cx * 100);
-      y.set(target.cy * 100);
+      void animate(x, target.cx * 100, { duration: reduced ? 0 : 0.45, ease: 'easeInOut' });
+      void animate(y, target.cy * 100, { duration: reduced ? 0 : 0.45, ease: 'easeInOut' });
+      if (!reduced) void animate(lift, [0, -18, 0], { duration: 0.45 });
       return;
     }
     const forward = pathBetween(from, position, n);
@@ -47,7 +62,7 @@ export function Token({ glyph, color, position, teleport, geoms, dx, dy, active,
       back <= 3 && forward.length > 3
         ? Array.from({ length: back }, (_, i) => (from - i - 1 + n) % n)
         : forward;
-    const per = Math.max(0.07, Math.min(0.2, 1.8 / Math.max(1, hops.length)));
+    const per = 0.11;
     let cancelled = false;
     (async () => {
       for (const i of hops) {
@@ -57,33 +72,30 @@ export function Token({ glyph, color, position, teleport, geoms, dx, dy, active,
         await Promise.all([
           animate(x, g.cx * 100, { duration: per, ease: 'easeInOut' }),
           animate(y, g.cy * 100, { duration: per, ease: 'easeInOut' }),
-          animate(scale, [1, 1.3, 1], { duration: per }),
+          animate(lift, [0, -9, 0], { duration: per, ease: 'easeOut' }),
         ]);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [position, teleport, geoms, reduced, x, y, scale]);
+  }, [position, teleport, geoms, reduced, x, y, lift]);
 
   return (
     <motion.div
-      className={`token ${active ? 'pulse' : ''}`}
+      className={`token ${active ? 'token-active' : ''}`}
       data-token={playerId}
       style={{
         left,
         top,
         x: `calc(-50% + ${dx * 100}cqw)`,
         y: `calc(-50% + ${dy * 100}cqw)`,
-        scale,
-        borderColor: color,
-        background: `color-mix(in srgb, ${color} 25%, white)`,
-        opacity: dimmed ? 0.35 : 1,
+        translateY: lift,
+        opacity: dimmed ? 0.4 : 1,
         zIndex: active ? 6 : 5,
       }}
-      aria-hidden
     >
-      <span>{glyph}</span>
+      <Pawn avatar={avatar} color={color} skin={skin} size={0} className="token-pawn" />
     </motion.div>
   );
 }

@@ -21,8 +21,8 @@ export function Toasts() {
               t.kind === 'error'
                 ? 'bg-red-600 text-white'
                 : t.kind === 'success'
-                  ? 'bg-leaf text-white'
-                  : 'bg-ink text-white'
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-[var(--panel-muted)] text-white'
             }`}
           >
             {t.text}

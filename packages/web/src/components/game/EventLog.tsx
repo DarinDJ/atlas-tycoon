@@ -28,7 +28,7 @@ export function EventLog({ game, map, me }: { game: GameState; map: MapDefinitio
       {lines.slice(-120).map((l, i) => (
         <li
           key={`${l.key}-${i}`}
-          className={`rounded px-1.5 py-0.5 ${l.type === 'bankrupt' || l.type === 'gameOver' ? 'bg-red-50 font-bold' : l.type === 'cardDrawn' ? 'bg-yellow-50' : ''}`}
+          className={`rounded px-1.5 py-0.5 ${l.type === 'bankrupt' || l.type === 'gameOver' ? 'bg-red-500/15 font-bold' : l.type === 'cardDrawn' ? 'bg-amber-500/15' : ''}`}
         >
           <span className="mr-1 opacity-40">T{l.turn}</span>
           {l.text}

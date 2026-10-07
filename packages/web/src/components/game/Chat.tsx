@@ -24,7 +24,7 @@ export function Chat({ canSend }: { canSend: boolean }) {
         {chat.map((m) => (
           <div
             key={m.id}
-            className={`rounded-lg px-2 py-1 ${m.system ? 'text-center text-xs opacity-60' : m.playerId === me ? 'self-end bg-saffron/15' : 'self-start bg-black/5'} ${m.emote ? 'text-2xl' : ''}`}
+            className={`rounded-lg px-2 py-1 ${m.system ? 'text-center text-xs opacity-60' : m.playerId === me ? 'self-end bg-[color-mix(in_srgb,var(--accent)_18%,transparent)]' : 'self-start bg-[var(--panel-muted)]'} ${m.emote ? 'text-2xl' : ''}`}
           >
             {!m.system && m.playerId !== me && (
               <span className="mr-1 text-xs font-bold opacity-70">{m.name}</span>
@@ -39,7 +39,7 @@ export function Chat({ canSend }: { canSend: boolean }) {
             {EMOTES.map((e) => (
               <button
                 key={e}
-                className="shrink-0 rounded-lg px-1.5 text-lg hover:bg-black/5"
+                className="shrink-0 rounded-lg px-1.5 text-lg hover:bg-[var(--panel-muted)]"
                 onClick={() => emote(e)}
                 aria-label={`emote ${e}`}
               >
@@ -49,7 +49,7 @@ export function Chat({ canSend }: { canSend: boolean }) {
             {QUICK.map((q) => (
               <button
                 key={q}
-                className="shrink-0 rounded-lg bg-black/5 px-2 text-xs font-semibold"
+                className="shrink-0 rounded-lg bg-[var(--panel-muted)] px-2 text-xs font-semibold"
                 onClick={() => emote(q)}
               >
                 {q}

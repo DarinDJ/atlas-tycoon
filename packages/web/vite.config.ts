@@ -13,7 +13,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'Bharat Tycoon',
+        name: 'Atlas Tycoon',
         short_name: 'Tycoon',
         description: 'Free multiplayer property-trading board game. Every map is a real place.',
         theme_color: '#ff7a1a',

@@ -36,7 +36,7 @@ export function AdSlot({ placement, enabled, entitlements = [], className = '' }
       ref={ref}
     >
       <span className="text-[10px] uppercase tracking-wide opacity-50">{t('ads.label')}</span>
-      <div className="h-[50px] w-full max-w-[320px] rounded bg-gray-100" aria-hidden />
+      <div className="h-[50px] w-full max-w-[320px] rounded bg-[var(--panel-muted)]" aria-hidden />
       <Link to="/store" className="text-xs underline opacity-70">
         {t('ads.remove')}
       </Link>

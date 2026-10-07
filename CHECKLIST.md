@@ -1,7 +1,7 @@
 # Launch checklist (things only you can do)
 
 ## Naming & legal
-- [ ] Pick the final name (working title "Bharat Tycoon"). Run a trademark search (India: ipindia.gov.in TM search; also USPTO/WIPO) and check domain + app-store availability. Rename in `packages/web/src/config/brand.ts`, `packages/web/index.html`, the PWA manifest in `packages/web/vite.config.ts`, `fly.toml`/`render.yaml` app names, and `public/sitemap.xml` URLs.
+- [ ] Pick the final name (working title "Atlas Tycoon"). Run a trademark search (India: ipindia.gov.in TM search; also USPTO/WIPO) and check domain + app-store availability. Rename in `packages/web/src/config/brand.ts`, `packages/web/index.html`, the PWA manifest in `packages/web/vite.config.ts`, `fly.toml`/`render.yaml` app names, and `public/sitemap.xml` URLs.
 - [ ] Have a lawyer glance at the card texts / tile names if you want extra comfort; everything is original, but "look and feel" claims exist in this genre.
 - [ ] Privacy policy & terms: the text in `pages/HowToPlay.tsx#privacy` is a placeholder. Put your legal entity, contact email (`BRAND.supportEmail`) and DPDP/GDPR specifics in.
 

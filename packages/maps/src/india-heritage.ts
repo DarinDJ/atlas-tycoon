@@ -463,7 +463,7 @@ export const indiaHeritage: MapDefinition = {
     },
   },
   seo: {
-    title: 'Play Bharat Tycoon: India Heritage & Tourism – free online board game',
+    title: 'Play Atlas Tycoon: India Heritage & Tourism – free online board game',
     description:
       "A free multiplayer property-trading board game set across India's monuments and tourist destinations. Buy the Taj Mahal, build hotels at Hampi, play with friends on your phone, no signup.",
     keywords: [

@@ -8,6 +8,7 @@ import { useI18n } from './i18n';
 import { Toasts } from './components/ui/Toasts';
 import { ConsentBanner } from './components/ConsentBanner';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { startAnimator } from './lib/animator';
 
 const Home = lazy(() => import('./pages/Home'));
 const RoomPage = lazy(() => import('./pages/Room'));
@@ -23,6 +24,7 @@ function Shell() {
   const location = useLocation();
   useEffect(() => {
     init();
+    startAnimator();
     applySettingsToDocument();
     document.documentElement.lang = lang;
   }, [init, lang]);

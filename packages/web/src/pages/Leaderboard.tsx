@@ -45,7 +45,7 @@ export default function Leaderboard() {
       </div>
       <div className="panel overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-black/5 text-left text-xs uppercase">
+          <thead className="bg-[var(--panel-muted)] text-left text-xs uppercase">
             <tr>
               <th className="p-2">#</th>
               <th className="p-2">Player</th>

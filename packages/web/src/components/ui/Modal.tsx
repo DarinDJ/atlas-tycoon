@@ -107,10 +107,10 @@ export function Toggle({
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative h-7 w-12 shrink-0 rounded-full transition ${checked ? 'bg-leaf' : 'bg-gray-300'}`}
+        className={`relative h-7 w-12 shrink-0 rounded-full transition ${checked ? 'bg-emerald-500' : 'bg-[var(--panel-border)]'}`}
       >
         <span
-          className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${checked ? 'left-[1.4rem]' : 'left-0.5'}`}
+          className={`absolute top-0.5 h-6 w-6 rounded-full bg-[var(--panel)] shadow transition ${checked ? 'left-[1.4rem]' : 'left-0.5'}`}
         />
       </button>
     </label>

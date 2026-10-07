@@ -81,7 +81,7 @@ export const indiaCities: MapDefinition = {
     },
   },
   seo: {
-    title: 'Play Bharat Tycoon: India Cities – free online board game',
+    title: 'Play Atlas Tycoon: India Cities – free online board game',
     description:
       'A free multiplayer property-trading board game set across Indian cities. Buy Mumbai and Delhi, build hotels in Bengaluru, play with friends on your phone, no signup.',
     keywords: [

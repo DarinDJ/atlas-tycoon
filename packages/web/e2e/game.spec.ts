@@ -7,10 +7,10 @@ async function setName(page: Page, name: string) {
   await page.getByTestId('name-input').fill(name);
 }
 
-test.describe('Bharat Tycoon', () => {
+test.describe('Atlas Tycoon', () => {
   test('landing page renders maps and lobby', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Bharat Tycoon');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Atlas Tycoon');
     await expect(page.getByTestId('map-india-cities')).toBeVisible();
     await expect(page.getByTestId('map-india-heritage')).toBeVisible();
   });

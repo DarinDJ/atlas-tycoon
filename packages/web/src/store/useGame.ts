@@ -40,6 +40,17 @@ export interface ChatMessage {
   system?: boolean;
 }
 
+/** What the board currently shows; lags the authoritative state while animations play. */
+export interface VisualState {
+  positions: Record<string, number>;
+  teleport: Record<string, boolean>;
+  dice: [number, number] | null;
+  rollKey: number;
+  card: { deck: 'luck' | 'treasure'; id: string } | null;
+  /** True while the animator is replaying a batch of events. */
+  busy: boolean;
+}
+
 export interface Toast {
   id: number;
   kind: 'error' | 'info' | 'success';
@@ -59,6 +70,7 @@ interface GameStore {
   lastEvents: GameEvent[];
   lobby: PublicRoom[];
   toasts: Toast[];
+  visual: VisualState;
   unreadChat: number;
   /** UI */
   selectedTile: number | null;
@@ -79,6 +91,9 @@ interface GameStore {
   toast(kind: Toast['kind'], text: string): void;
   dismissToast(id: number): void;
   consumeEvents(): { seq: number; events: GameEvent[] } | null;
+  setVisual(patch: Partial<VisualState>): void;
+  /** Snap the visual layer to the authoritative state (reconnect, new game). */
+  syncVisual(): void;
   selectTile(i: number | null): void;
   openTrade(playerId: string | null): void;
   markChatRead(): void;
@@ -100,6 +115,7 @@ export const useGame = create<GameStore>((set, get) => ({
   lastEvents: [],
   lobby: [],
   toasts: [],
+  visual: { positions: {}, teleport: {}, dice: null, rollKey: 0, card: null, busy: false },
   unreadChat: 0,
   selectedTile: null,
   tradeWith: null,
@@ -124,7 +140,20 @@ export const useGame = create<GameStore>((set, get) => ({
       if (prev && prev.status !== 'playing' && view.status === 'playing') sfx.play('notify');
     });
     s.on('game:state', (snap: { state: GameState; legal: LegalActions | null }) => {
+      const prev = get().game;
       set({ game: snap.state, legal: snap.legal });
+      // First state of a game (or after reconnect): place pawns immediately.
+      if (!prev || prev.seq > snap.state.seq || prev.startedAt !== snap.state.startedAt) get().syncVisual();
+      else {
+        // Players not yet placed (e.g. late joiner) get their real position.
+        const v = get().visual;
+        const missing = snap.state.players.filter((p) => v.positions[p.id] === undefined);
+        if (missing.length) {
+          const positions = { ...v.positions };
+          for (const p of missing) positions[p.id] = p.position;
+          set({ visual: { ...v, positions } });
+        }
+      }
     });
     s.on('game:events', (p: { seq: number; events: GameEvent[] }) => {
       set((st) => ({ eventQueue: [...st.eventQueue, p], lastEvents: p.events }));
@@ -209,6 +238,16 @@ export const useGame = create<GameStore>((set, get) => ({
     return q[0]!;
   },
 
+  setVisual: (patch) => set((st) => ({ visual: { ...st.visual, ...patch } })),
+  syncVisual: () => {
+    const g = get().game;
+    if (!g) return;
+    const positions: Record<string, number> = {};
+    for (const p of g.players) positions[p.id] = p.position;
+    set((st) => ({
+      visual: { ...st.visual, positions, teleport: {}, dice: g.dice, card: null, busy: false },
+    }));
+  },
   selectTile: (i) => set({ selectedTile: i }),
   openTrade: (playerId) => set({ tradeWith: playerId }),
   markChatRead: () => set({ unreadChat: 0 }),

@@ -14,7 +14,7 @@ export function ConsentBanner() {
     <div
       role="region"
       aria-label="Cookie consent"
-      className="fixed inset-x-2 bottom-[calc(var(--safe-bottom)+0.5rem)] z-50 mx-auto max-w-xl rounded-2xl border border-black/10 bg-white p-4 shadow-xl"
+      className="fixed inset-x-2 bottom-[calc(var(--safe-bottom)+0.5rem)] z-50 mx-auto max-w-xl rounded-2xl border border-[var(--panel-border)] bg-[var(--panel)] p-4 shadow-xl"
     >
       <p className="mb-3 text-sm">
         {t('consent.text')}{' '}

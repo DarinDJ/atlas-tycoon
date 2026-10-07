@@ -1,4 +1,4 @@
-# Bharat Tycoon game server
+# Atlas Tycoon game server
 FROM node:22-alpine AS base
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -11,7 +11,7 @@ COPY tsconfig.base.json ./
 COPY packages/engine packages/engine
 COPY packages/maps packages/maps
 COPY packages/server packages/server
-ENV NODE_ENV=production PORT=3001 HOST=0.0.0.0 DB_PATH=/data/bharat.db
+ENV NODE_ENV=production PORT=3001 HOST=0.0.0.0 DB_PATH=/data/atlas.db
 RUN mkdir -p /data && chown node:node /data
 USER node
 EXPOSE 3001

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: bharat-tycoon-server
+    name: atlas-tycoon-server
     runtime: docker
     dockerfilePath: packages/server/Dockerfile
     plan: starter
@@ -14,7 +14,7 @@ services:
       - key: PORT
         value: 3001
       - key: DB_PATH
-        value: /data/bharat.db
+        value: /data/atlas.db
       - key: TRUST_PROXY
         value: "true"
       - key: CORS_ORIGINS

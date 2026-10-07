@@ -3,13 +3,13 @@
  * (Also update index.html <title>/<meta> and vite.config.ts manifest name.)
  */
 export const BRAND = {
-  name: 'Bharat Tycoon',
+  name: 'Atlas Tycoon',
   shortName: 'Tycoon',
-  tagline: 'Every map is a real place.',
-  domain: 'bharattycoon.example',
-  supportEmail: 'hello@bharattycoon.example',
+  tagline: 'Buy the world, one city at a time.',
+  domain: 'atlastycoon.example',
+  supportEmail: 'hello@atlastycoon.example',
   /** Used in share text. */
-  hashtag: '#BharatTycoon',
+  hashtag: '#AtlasTycoon',
   /** Shown as the Luck/Treasure deck names when a map does not override them. */
   defaultDeckNames: { luck: 'Luck', treasure: 'Treasure' },
   version: '0.1.0',

@@ -1,4 +1,4 @@
-# Bharat Tycoon
+# Atlas Tycoon
 
 A free, no-signup, multiplayer property-trading board game for the browser, in the spirit of richup.io.
 2–8 players (or bots), every map is a real place, and the launch map is **India – Cities**.

@@ -63,7 +63,7 @@ export async function startServer(overrides: Partial<typeof config> = {}): Promi
 const isMain = process.argv[1] && /index\.(ts|js)$/.test(process.argv[1]) && !process.env.VITEST;
 if (isMain) {
   startServer()
-    .then((s) => console.log(`[server] Bharat Tycoon server listening on :${s.port}`))
+    .then((s) => console.log(`[server] Atlas Tycoon server listening on :${s.port}`))
     .catch((err) => {
       console.error(err);
       process.exit(1);

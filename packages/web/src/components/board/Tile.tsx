@@ -5,6 +5,7 @@ import type { TileGeom } from '../../lib/board';
 import { groupColor, groupMarker, tileGlyph } from '../../lib/tileArt';
 import { tileName, useI18n } from '../../i18n';
 import { useSettings } from '../../store/useSettings';
+import { Pawn } from '../Pawn';
 
 interface Props {
   index: number;
@@ -45,7 +46,12 @@ export const TileView = memo(function TileView({
       data-side={geom.side}
       data-selected={selected}
       data-tile={index}
-      style={{ gridColumn: geom.col, gridRow: geom.row }}
+      data-owned={!!owner}
+      style={{
+        gridColumn: geom.col,
+        gridRow: geom.row,
+        ['--owner-color' as string]: owner?.color ?? 'transparent',
+      }}
       role="button"
       tabIndex={0}
       aria-label={`${name}${owner ? `, owned by ${owner.name}` : ''}`}
@@ -57,23 +63,17 @@ export const TileView = memo(function TileView({
         }
       }}
     >
-      {owner && <div className="owner-badge" style={{ background: owner.color }} aria-hidden />}
-      {own?.mortgaged && <div className="mortgage-stripe" aria-hidden />}
       {color && !geom.corner && (
         <div className="band" style={{ background: color }} aria-hidden>
-          {colorblind && marker && (
-            <span className="absolute inset-0 flex items-center justify-center text-[0.55em] font-black text-white mix-blend-difference">
-              {marker}
-            </span>
-          )}
+          {colorblind && marker && <span className="band-marker">{marker}</span>}
         </div>
       )}
       {own && own.houses > 0 && (
         <div className="houses" aria-label={own.houses === 5 ? 'hotel' : `${own.houses} houses`}>
           {own.houses === 5 ? (
-            <span>🏨</span>
+            <span className="hotel">H</span>
           ) : (
-            Array.from({ length: own.houses }, (_, i) => <span key={i}>🏠</span>)
+            Array.from({ length: own.houses }, (_, i) => <span key={i} className="house" />)
           )}
         </div>
       )}
@@ -82,18 +82,25 @@ export const TileView = memo(function TileView({
           {tileGlyph(tile)}
         </span>
         <span className="name line-clamp-2">{name}</span>
-        {price && !own && <span className="price">{price}</span>}
-        {owner && (
-          <span className="price" style={{ color: owner.color, opacity: 1, fontWeight: 700 }}>
-            {owner.name
-              .replace(/\s*\(bot\)/i, '')
-              .split(' ')[0]!
-              .slice(0, 8)}
-          </span>
-        )}
+        {price && !owner && <span className="price">{price}</span>}
       </div>
+      {owner && (
+        <div className="owner" aria-hidden>
+          <Pawn
+            avatar={owner.avatar}
+            color={owner.color}
+            skin={owner.token}
+            size={0}
+            className="owner-pawn"
+          />
+        </div>
+      )}
+      {own?.mortgaged && <div className="mortgage-stripe" aria-hidden />}
       {highlight && (
-        <div className="pointer-events-none absolute inset-0 ring-4 ring-inset ring-saffron/70" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 ring-4 ring-inset ring-[var(--accent)]"
+          aria-hidden
+        />
       )}
     </div>
   );

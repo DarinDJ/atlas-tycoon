@@ -25,7 +25,7 @@ export function TurnTimer({ deadline }: { deadline: number | null }) {
   const left = Math.max(0, Math.ceil((deadline - now) / 1000));
   return (
     <span
-      className={`rounded-full px-2 py-0.5 text-xs font-bold tabular-nums ${left <= 10 ? 'bg-red-600 text-white' : 'bg-black/10'}`}
+      className={`rounded-full px-2 py-0.5 text-xs font-bold tabular-nums ${left <= 10 ? 'bg-red-600 text-white' : 'bg-[var(--panel-muted)]'}`}
       aria-live="off"
     >
       ⏱ {left}s
@@ -60,7 +60,7 @@ export function ActionBar({ game, map, legal, me, deadline }: Props) {
       : t('app.bank');
     return (
       <div className="flex flex-col items-center gap-2 text-center" data-testid="debt-bar">
-        <p className="text-sm font-semibold text-red-700">
+        <p className="text-sm font-semibold text-red-400">
           {t('game.debt', { amount: money(map, owed), to })}
         </p>
         <p className="text-xs opacity-70">
@@ -102,7 +102,7 @@ export function ActionBar({ game, map, legal, me, deadline }: Props) {
   const pending = game.pendingBuy !== null ? map.tiles[game.pendingBuy] : null;
   return (
     <div className="flex flex-wrap items-center justify-center gap-2" data-testid="action-bar">
-      <span className="mr-1 text-sm font-bold text-saffron-dark">{t('game.yourTurn')}</span>
+      <span className="mr-1 text-sm font-bold text-[var(--accent)]">{t('game.yourTurn')}</span>
       <TurnTimer deadline={deadline} />
       {game.phase === 'preRoll' && player.inJail && (
         <>

@@ -2,7 +2,7 @@ import type { HouseRules } from '@bt/engine';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BRAND } from '../../config/brand';
-import { AVATARS, glyphFor } from '../../config/cosmetics';
+import { Pawn } from '../Pawn';
 import { mapName, useI18n, useT } from '../../i18n';
 import type { MapSummary } from '../../lib/api';
 import { whatsappUrl } from '../../lib/shareCard';
@@ -152,16 +152,16 @@ export function Lobby({ room, me, mapSummary, adsEnabled, entitlements, autostar
             {room.seats.map((s) => (
               <li
                 key={s.playerId}
-                className="flex items-center gap-2 rounded-xl bg-black/5 px-2 py-1.5"
+                className="flex items-center gap-2 rounded-xl bg-[var(--panel-muted)] px-2 py-1.5"
                 style={{ borderLeft: `5px solid ${s.color}` }}
               >
-                <span className="text-xl">{glyphFor(AVATARS, s.avatar)}</span>
+                <Pawn avatar={s.avatar} color={s.color} skin={s.token} size={34} />
                 <span className="flex-1 truncate font-semibold">
                   {s.name}
                   {s.playerId === me && <span className="ml-1 text-xs opacity-60">({t('app.you')})</span>}
                 </span>
                 {s.isHost && (
-                  <span className="rounded bg-saffron/20 px-1.5 text-[10px] font-bold uppercase text-saffron-dark">
+                  <span className="rounded bg-[color-mix(in_srgb,var(--accent)_25%,transparent)] px-1.5 text-[10px] font-bold uppercase text-[var(--accent)]">
                     {t('lobby.host')}
                   </span>
                 )}
@@ -229,7 +229,7 @@ export function Lobby({ room, me, mapSummary, adsEnabled, entitlements, autostar
 
         <section className="panel p-4">
           <h2 className="mb-1 text-sm font-bold">{t('lobby.rules')}</h2>
-          <div className="flex flex-col divide-y divide-black/5">
+          <div className="flex flex-col divide-y divide-[var(--panel-border)]">
             <Num k="maxPlayers" label={t('lobby.maxPlayers')} min={2} max={8} />
             <Num k="startingCash" label={t('lobby.startingCash')} step={50} min={100} />
             <Num k="salary" label={t('lobby.salary')} step={10} />

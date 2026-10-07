@@ -1,7 +1,6 @@
 import type { GameState, MapDefinition } from '@bt/engine';
 import { useMemo, type ReactNode } from 'react';
 import { boardGeometry, tokenOffset } from '../../lib/board';
-import { TOKENS, glyphFor } from '../../config/cosmetics';
 import { TileView } from './Tile';
 import { Token } from './Token';
 
@@ -12,22 +11,35 @@ interface Props {
   onSelect(i: number | null): void;
   /** Tile indices to highlight (e.g. legal build targets). */
   highlights?: number[];
-  teleported?: Set<string>;
+  /** Visual (animated) positions; falls back to the state positions. */
+  positions?: Record<string, number>;
+  teleport?: Record<string, boolean>;
   children?: ReactNode;
 }
 
-export function Board({ map, game, selectedTile, onSelect, highlights = [], teleported, children }: Props) {
+export function Board({
+  map,
+  game,
+  selectedTile,
+  onSelect,
+  highlights = [],
+  positions,
+  teleport,
+  children,
+}: Props) {
   const n = map.tiles.length;
   const geometry = useMemo(() => boardGeometry(n), [n]);
   const current = game?.players[game.current]?.id;
+  const posOf = (p: { id: string; position: number }) => positions?.[p.id] ?? p.position;
   const clusters = useMemo(() => {
     const byTile = new Map<number, string[]>();
     for (const p of game?.players ?? []) {
       if (p.bankrupt) continue;
-      byTile.set(p.position, [...(byTile.get(p.position) ?? []), p.id]);
+      const pos = positions?.[p.id] ?? p.position;
+      byTile.set(pos, [...(byTile.get(pos) ?? []), p.id]);
     }
     return byTile;
-  }, [game?.players]);
+  }, [game?.players, positions]);
   const hl = useMemo(() => new Set(highlights), [highlights]);
 
   return (
@@ -65,16 +77,17 @@ export function Board({ map, game, selectedTile, onSelect, highlights = [], tele
       </div>
       {game?.players.map((p) => {
         if (p.bankrupt) return null;
-        const list = clusters.get(p.position) ?? [];
+        const list = clusters.get(posOf(p)) ?? [];
         const { dx, dy } = tokenOffset(list.indexOf(p.id), list.length);
         return (
           <Token
             key={p.id}
             playerId={p.id}
-            glyph={glyphFor(TOKENS, p.token)}
+            avatar={p.avatar}
+            skin={p.token}
             color={p.color}
-            position={p.position}
-            teleport={teleported?.has(p.id) ?? false}
+            position={posOf(p)}
+            teleport={teleport?.[p.id] ?? false}
             geoms={geometry.tiles}
             dx={dx}
             dy={dy}

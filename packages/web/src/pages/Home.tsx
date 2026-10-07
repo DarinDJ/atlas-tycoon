@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BRAND } from '../config/brand';
-import { AVATARS, TOKENS, glyphFor, isUnlocked } from '../config/cosmetics';
+import { AVATARS, PLAYER_COLORS, TOKENS, isUnlocked } from '../config/cosmetics';
+import { Pawn } from '../components/Pawn';
 import { mapName, useI18n, useT } from '../i18n';
 import { api, type AppConfig, type PublicRoom } from '../lib/api';
 import { getProfile, saveProfile, type Profile } from '../lib/storage';
@@ -14,21 +15,25 @@ import { sfx } from '../lib/audio';
 export function ProfileEditor({ profile, onChange }: { profile: Profile; onChange(p: Profile): void }) {
   const t = useT();
   const ents = useEntitlements();
+  const previewColor = PLAYER_COLORS[Math.abs(hashCode(profile.name || 'you')) % PLAYER_COLORS.length]!;
   return (
     <div className="flex flex-col gap-3">
-      <label className="flex flex-col gap-1 text-sm font-semibold">
-        {t('home.yourName')}
-        <input
-          className="input"
-          value={profile.name}
-          maxLength={16}
-          placeholder={t('home.namePlaceholder')}
-          onChange={(e) => onChange({ ...profile, name: e.target.value })}
-          data-testid="name-input"
-          autoComplete="nickname"
-        />
-      </label>
-      <div className="text-sm font-semibold">{t('home.avatar')}</div>
+      <div className="flex items-center gap-3">
+        <Pawn avatar={profile.avatar} color={previewColor} skin={profile.token} size={56} />
+        <label className="flex flex-1 flex-col gap-1 text-sm font-semibold">
+          {t('home.yourName')}
+          <input
+            className="input"
+            value={profile.name}
+            maxLength={16}
+            placeholder={t('home.namePlaceholder')}
+            onChange={(e) => onChange({ ...profile, name: e.target.value })}
+            data-testid="name-input"
+            autoComplete="nickname"
+          />
+        </label>
+      </div>
+      <div className="text-xs font-semibold uppercase tracking-wide muted">{t('home.avatar')}</div>
       <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={t('home.avatar')}>
         {AVATARS.map((a) => {
           const locked = !isUnlocked(a, ents);
@@ -39,7 +44,7 @@ export function ProfileEditor({ profile, onChange }: { profile: Profile; onChang
               aria-checked={profile.avatar === a.id}
               disabled={locked}
               title={a.name}
-              className={`h-10 w-10 rounded-xl text-xl transition focus-ring ${profile.avatar === a.id ? 'bg-saffron/25 ring-2 ring-saffron' : 'bg-black/5'} ${locked ? 'opacity-40' : ''}`}
+              className={`h-10 w-10 rounded-xl text-xl transition focus-ring ${profile.avatar === a.id ? 'bg-[color-mix(in_srgb,var(--accent)_30%,transparent)] ring-2 ring-[var(--accent)]' : 'bg-[var(--panel-muted)]'} ${locked ? 'opacity-40' : ''}`}
               onClick={() => onChange({ ...profile, avatar: a.id })}
             >
               {a.glyph}
@@ -47,8 +52,8 @@ export function ProfileEditor({ profile, onChange }: { profile: Profile; onChang
           );
         })}
       </div>
-      <div className="text-sm font-semibold">{t('home.token')}</div>
-      <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={t('home.token')}>
+      <div className="text-xs font-semibold uppercase tracking-wide muted">{t('home.token')}</div>
+      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t('home.token')}>
         {TOKENS.map((a) => {
           const locked = !isUnlocked(a, ents);
           return (
@@ -58,10 +63,10 @@ export function ProfileEditor({ profile, onChange }: { profile: Profile; onChang
               aria-checked={profile.token === a.id}
               disabled={locked}
               title={a.name}
-              className={`h-10 w-10 rounded-xl text-xl transition focus-ring ${profile.token === a.id ? 'bg-leaf/20 ring-2 ring-leaf' : 'bg-black/5'} ${locked ? 'opacity-40' : ''}`}
+              className={`flex h-12 w-12 items-center justify-center rounded-xl transition focus-ring ${profile.token === a.id ? 'bg-[color-mix(in_srgb,var(--accent)_30%,transparent)] ring-2 ring-[var(--accent)]' : 'bg-[var(--panel-muted)]'} ${locked ? 'opacity-40' : ''}`}
               onClick={() => onChange({ ...profile, token: a.id })}
             >
-              {a.glyph}
+              <Pawn avatar={profile.avatar} color={previewColor} skin={a.id} size={30} />
             </button>
           );
         })}
@@ -70,13 +75,19 @@ export function ProfileEditor({ profile, onChange }: { profile: Profile; onChang
   );
 }
 
+function hashCode(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
+  return h;
+}
+
 export default function Home() {
   const t = useT();
   const lang = useI18n((s) => s.lang);
   const nav = useNavigate();
   const [profile, setProfile] = useState<Profile>(getProfile);
   const [config, setConfig] = useState<AppConfig | null>(null);
-  const [mapId, setMapId] = useState('india-cities');
+  const [mapId, setMapId] = useState('world-cities');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -147,10 +158,12 @@ export default function Home() {
     >
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-black tracking-tight text-saffron-dark sm:text-4xl">
-            {t('home.title')}
+          <h1 className="font-display text-3xl font-black tracking-tight sm:text-5xl">
+            <span className="bg-gradient-to-r from-[var(--accent)] to-amber-300 bg-clip-text text-transparent">
+              {t('home.title')}
+            </span>
           </h1>
-          <p className="text-sm opacity-70">{t('home.subtitle')}</p>
+          <p className="muted text-sm sm:text-base">{t('home.subtitle')}</p>
         </div>
         <button
           className="btn btn-secondary btn-sm"
@@ -161,8 +174,8 @@ export default function Home() {
         </button>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-[1.1fr_1fr]">
-        <section className="panel flex flex-col gap-4 p-4">
+      <div className="grid gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(17rem,1fr)]">
+        <section className="panel flex min-w-0 flex-col gap-4 p-4">
           <ProfileEditor profile={profile} onChange={setProfile} />
 
           <div>
@@ -176,7 +189,7 @@ export default function Home() {
                     role="radio"
                     aria-checked={mapId === m.id}
                     onClick={() => setMapId(m.id)}
-                    className={`relative min-w-[9rem] shrink-0 rounded-xl p-3 text-left text-white shadow transition focus-ring ${mapId === m.id ? 'ring-4 ring-saffron' : 'opacity-90'}`}
+                    className={`map-card min-w-[10rem] shrink-0 p-3 text-left shadow transition focus-ring ${mapId === m.id ? 'ring-4 ring-[var(--accent)]' : 'opacity-85 hover:opacity-100'}`}
                     style={{
                       background:
                         m.theme.centerGradient ??
@@ -248,7 +261,7 @@ export default function Home() {
             </form>
           </div>
           {mapLocked && (
-            <p className="text-xs text-red-700">
+            <p className="text-xs text-red-400">
               {t('err.MAP_LOCKED')}.{' '}
               <Link to="/store" className="underline">
                 {t('home.store')}
@@ -267,7 +280,7 @@ export default function Home() {
                 {lobby.map((r: PublicRoom) => (
                   <li
                     key={r.code}
-                    className="flex items-center justify-between gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm"
+                    className="flex items-center justify-between gap-2 rounded-lg bg-[var(--panel-muted)] px-2 py-1.5 text-sm"
                   >
                     <span>
                       <b>{r.hostName}</b> · {maps.find((m) => m.id === r.mapId)?.flag ?? ''}{' '}
@@ -316,7 +329,6 @@ export default function Home() {
         </a>
       </footer>
       <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <span className="hidden">{glyphFor(AVATARS, profile.avatar)}</span>
     </main>
   );
 }

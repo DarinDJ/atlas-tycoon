@@ -20,7 +20,7 @@ const DEFAULTS: Settings = {
   reducedMotion: typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches,
   textScale: 1,
   colorblind: false,
-  theme: 'classic',
+  theme: 'night',
   diceSkin: 'ivory',
   consent: 'unknown',
   mutedPlayers: [],

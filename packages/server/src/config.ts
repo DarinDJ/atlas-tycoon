@@ -10,7 +10,7 @@ export const config = {
     .split(',')
     .map((s) => s.trim()),
   /** sqlite file path, or ':memory:' for tests. */
-  dbPath: env.DB_PATH ?? './data/bharat.db',
+  dbPath: env.DB_PATH ?? './data/atlas.db',
   /** Bots act after a short, human-feeling delay. */
   botDelayMs: Number(env.BOT_DELAY_MS ?? 900),
   /** Consecutive timeouts before an AFK human seat is handed to a bot. */

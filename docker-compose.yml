@@ -6,7 +6,7 @@ services:
       dockerfile: packages/server/Dockerfile
     environment:
       PORT: 3001
-      DB_PATH: /data/bharat.db
+      DB_PATH: /data/atlas.db
       CORS_ORIGINS: http://localhost:8080,http://localhost:5173
       PUBLIC_URL: http://localhost:8080
       TRUST_PROXY: "true"

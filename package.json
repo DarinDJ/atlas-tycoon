@@ -1,8 +1,8 @@
 {
-  "name": "bharat-tycoon",
+  "name": "atlas-tycoon",
   "private": true,
   "version": "0.1.0",
-  "description": "Bharat Tycoon - a free multiplayer property-trading board game where every map is a real place.",
+  "description": "Atlas Tycoon - a free multiplayer property-trading board game where every map is a real place.",
   "workspaces": [
     "packages/engine",
     "packages/maps",

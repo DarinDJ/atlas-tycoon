@@ -1,6 +1,6 @@
 export const en = {
   // generic
-  'app.tagline': 'Every map is a real place.',
+  'app.tagline': 'Buy the world, one city at a time.',
   'app.play': 'Play',
   'app.cancel': 'Cancel',
   'app.close': 'Close',
@@ -26,8 +26,9 @@ export const en = {
   'app.offline': 'Reconnecting…',
 
   // home
-  'home.title': 'Bharat Tycoon',
-  'home.subtitle': 'Buy cities, build hotels, bankrupt your friends. Free, no signup, 2–8 players.',
+  'home.title': 'Atlas Tycoon',
+  'home.subtitle':
+    'Buy the world city by city, build hotels, bankrupt your friends. Free, no signup, 2–8 players.',
   'home.yourName': 'Your name',
   'home.namePlaceholder': 'e.g. Arjun',
   'home.avatar': 'Avatar',

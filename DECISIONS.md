@@ -1,6 +1,6 @@
 # Decisions log
 
-Running record of product/engineering decisions made autonomously while building Bharat Tycoon.
+Running record of product/engineering decisions made autonomously while building Atlas Tycoon.
 
 ## Stack & structure
 - **npm workspaces** instead of pnpm/turbo: no extra install on a fresh machine; four packages (`engine`, `maps`, `server`, `web`).
@@ -35,3 +35,11 @@ Running record of product/engineering decisions made autonomously while building
 ## Monetization
 - Payments are adapters (`StripeProvider`, `RazorpayProvider`) with HMAC webhook verification already wired; checkout creation is stubbed behind clear `TODO(real-*)` markers. A `dev` provider completes purchases instantly when `STORE_DEV_MODE=true`.
 - Ads are behind `ADS_ENABLED` and only render in lobby/results screens, never on the board.
+
+## 2026-10-08 feedback round
+- **Renamed to "Atlas Tycoon"** (working title, one-file rename in `packages/web/src/config/brand.ts`): the game is global; India is one map among several. Default map is now World Cities; bot names are international.
+- **Clusters = one country/state/region per colour group** on the World, USA and UK maps (richup-style), with the flag/regional emoji on every tile of the group. India maps keep regional clusters.
+- **Animation sequencing**: the client replays server event batches through `lib/animator.ts` (dice tumble ~0.95 s, then pawn hops, then card flip). The board renders `visual` positions that lag the authoritative state, so pawns never move while dice are still rolling.
+- **Pawns are the player's avatar on a disc in the player's colour**; "token" cosmetics became pawn shapes/finishes. Ownership on tiles is a solid colour strip plus the owner's mini pawn instead of a faint tint.
+- **Default theme is dark ("night")** with light board tiles; all UI colours are theme variables.
+- **Trade dialog** is a fixed-height two-column layout (give | get) with cash sliders and property chips so both sides fit one laptop screen.
