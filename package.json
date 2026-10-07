@@ -1,0 +1,40 @@
+{
+  "name": "bharat-tycoon",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Bharat Tycoon - a free multiplayer property-trading board game where every map is a real place.",
+  "workspaces": [
+    "packages/engine",
+    "packages/maps",
+    "packages/server",
+    "packages/web"
+  ],
+  "scripts": {
+    "build": "npm run build -w @bt/engine && npm run build -w @bt/maps && npm run build -w @bt/server && npm run build -w @bt/web",
+    "dev": "concurrently -n server,web -c blue,magenta \"npm run dev -w @bt/server\" \"npm run dev -w @bt/web\"",
+    "test": "npm run test -w @bt/engine && npm run test -w @bt/maps && npm run test -w @bt/server",
+    "test:e2e": "npm run test:e2e -w @bt/web",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "simulate": "npm run simulate -w @bt/engine --",
+    "validate-maps": "npm run validate -w @bt/maps"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}
