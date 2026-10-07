@@ -51,7 +51,7 @@ export function simulateGame(map: MapDefinition, opts: SimOptions = {}): SimResu
     botLevel: levels[i % levels.length],
   }));
   let state = createGame(map, seats, { turnTimerSeconds: 0, ...(opts.rules ?? {}) }, seed, 0);
-  const maxTurns = opts.maxTurns ?? 600;
+  const maxTurns = opts.maxTurns ?? Math.max(600, 150 * n);
   const tileBought: Record<number, number> = {};
   const tileRent: Record<number, number> = {};
   let actions = 0;

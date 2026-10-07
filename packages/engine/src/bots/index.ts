@@ -8,7 +8,7 @@ import { isOwnable, mortgageValue } from '../types/map.js';
 import type { GameState, TradeOffer, TradeSide } from '../types/state.js';
 import type { BotLevel } from '../types/rules.js';
 import * as C from '../engine/checks.js';
-import { findPlayer, groupTiles, ownedTiles, ownsFullGroup, unmortgageCost } from '../engine/helpers.js';
+import { findPlayer, groupTiles, ownedTiles, unmortgageCost } from '../engine/helpers.js';
 import { legalActions } from '../engine/queries.js';
 import { seedFromString } from '../rng.js';
 
@@ -280,6 +280,25 @@ function chooseUnmortgage(
   return null;
 }
 
+/** 0 early in the game, rising to 1 once the game has dragged on (bots get more willing to deal). */
+function urgency(state: GameState): number {
+  const n = Math.max(2, state.players.filter((p) => !p.bankrupt).length);
+  const start = 35 * n;
+  const span = 60 * n;
+  return Math.max(0, Math.min(1, (state.turn - start) / span));
+}
+
+/** Would `pid` own the complete group of `tile` after receiving `tiles`? */
+function completesSet(state: GameState, map: MapDefinition, pid: string, tiles: number[]): boolean {
+  for (const idx of tiles) {
+    const t = map.tiles[idx];
+    if (!t || t.type !== 'property') continue;
+    const group = groupTiles(map, t.group);
+    if (group.every((i) => tiles.includes(i) || state.ownership[i]?.owner === pid)) return true;
+  }
+  return false;
+}
+
 function respondToTrade(
   state: GameState,
   map: MapDefinition,
@@ -288,24 +307,32 @@ function respondToTrade(
   level: BotLevel,
   profile: Profile,
 ): PlayerAction {
+  const p = findPlayer(state, playerId);
+  const other = findPlayer(state, t.from);
+  if (t.request.cash > p.cash - reserve(state, profile) * 0.5)
+    return { type: 'declineTrade', playerId, tradeId: t.id };
   // What I receive vs what I give, valued from my perspective.
   const gain = sideValue(state, map, playerId, t.offer, level);
   const give = sideValue(state, map, playerId, t.request, level);
-  // Also consider what the other side gains (hard bots dislike enabling monopolies).
-  const theirGain = level === 'hard' ? sideValue(state, map, t.from, t.request, level) : 0;
-  const p = findPlayer(state, playerId);
-  if (t.request.cash > p.cash - reserve(state, profile) * 0.5)
-    return { type: 'declineTrade', playerId, tradeId: t.id };
-  const margin = give * profile.tradeAcceptMargin;
-  const enablesTheirSet = theirGain > give * 1.8;
-  if (gain >= give + margin && !(enablesTheirSet && gain < give * 1.5)) {
-    return { type: 'acceptTrade', playerId, tradeId: t.id };
-  }
-  if (level === 'hard' && !t.counterOf && gain > 0) {
-    // Counter: ask for enough cash to make it worth it.
-    const shortfall = Math.ceil(give * 1.25 + (enablesTheirSet ? give * 0.5 : 0) - gain);
-    const other = findPlayer(state, t.from);
-    if (shortfall > 0 && shortfall <= other.cash) {
+  if (give <= 0) return { type: 'acceptTrade', playerId, tradeId: t.id };
+  const theySet = completesSet(state, map, t.from, t.request.properties);
+  const iSet = completesSet(state, map, playerId, t.offer.properties);
+  const u = urgency(state);
+  const myWorth = netWorthOf(state, map, playerId);
+  const theirWorth = netWorthOf(state, map, t.from);
+  const behind = myWorth < theirWorth * 0.5;
+  let required = level === 'hard' ? 1.2 : level === 'medium' ? 1.1 : 1.0;
+  if (theySet) required += level === 'hard' ? 0.45 : level === 'medium' ? 0.3 : 0.1;
+  if (iSet) required -= 0.3;
+  required -= u * 0.35;
+  if (behind && t.offer.cash >= give) required -= 0.2;
+  required = Math.max(0.85, required);
+  const ratio = gain / give;
+  if (ratio >= required) return { type: 'acceptTrade', playerId, tradeId: t.id };
+  if (level !== 'easy' && !t.counterOf && gain > 0) {
+    // Counter: ask for the cash that would make it worth it.
+    const shortfall = Math.ceil(give * required - gain);
+    if (shortfall > 0 && t.offer.cash + shortfall <= other.cash) {
       return {
         type: 'counterTrade',
         playerId,
@@ -318,57 +345,98 @@ function respondToTrade(
   return { type: 'declineTrade', playerId, tradeId: t.id };
 }
 
-/** Hard/medium bots look for a set they are one tile short of and offer cash + a spare property. */
+function netWorthOf(state: GameState, map: MapDefinition, pid: string): number {
+  const p = findPlayer(state, pid);
+  let total = p.cash;
+  for (const i of ownedTiles(state, pid)) {
+    const t = map.tiles[i]!;
+    if (!isOwnable(t)) continue;
+    total += state.ownership[i]!.mortgaged ? mortgageValue(t) : t.price;
+    if (t.type === 'property') total += state.ownership[i]!.houses * t.houseCost;
+  }
+  return total;
+}
+
+/**
+ * Look for a colour set the bot is one or two tiles short of (all held by other players) and offer
+ * cash, optionally sweetened with a spare property the other side has a partial set in.
+ */
 function proposeTrade(
   state: GameState,
   map: MapDefinition,
   playerId: string,
   level: BotLevel,
 ): PlayerAction | null {
-  // Throttle: one proposal every few turns, and only if nothing is pending from me.
   if (state.trades.some((t) => t.status === 'pending' && t.from === playerId)) return null;
-  const recent = state.trades.filter(
-    (t) => t.from === playerId && state.turn - t.createdTurn < (level === 'hard' ? 6 : 12),
-  );
-  if (recent.length > 0) return null;
+  const u = urgency(state);
+  const cooldown = Math.max(2, Math.round((level === 'hard' ? 5 : 9) * (1 - u * 0.6)));
+  if (state.trades.some((t) => t.from === playerId && state.turn - t.createdTurn < cooldown)) return null;
   const p = findPlayer(state, playerId);
+  const mult = (level === 'hard' ? 1.5 : 1.3) + u * 0.6;
+
+  interface Candidate {
+    missing: number;
+    owner: string;
+    score: number;
+  }
+  const candidates: Candidate[] = [];
   for (const g of map.groups) {
     const tiles = groupTiles(map, g.id);
     const mine = tiles.filter((i) => state.ownership[i]?.owner === playerId);
-    if (mine.length !== tiles.length - 1) continue;
-    const missing = tiles.find((i) => state.ownership[i]?.owner !== playerId)!;
-    const own = state.ownership[missing];
-    if (!own) continue;
-    const other = findPlayer(state, own.owner);
-    if (other.bankrupt || (other.isBot === false && level === 'easy')) continue;
+    if (mine.length === 0 || mine.length === tiles.length) continue;
+    const missing = tiles.filter((i) => state.ownership[i]?.owner !== playerId);
+    if (missing.length > 2) continue;
+    if (missing.some((i) => !state.ownership[i])) continue; // still buyable from the bank
     if (tiles.some((i) => (state.ownership[i]?.houses ?? 0) > 0)) continue;
-    const tile = map.tiles[missing] as PropertyTile;
-    // Offer: cash ~ 1.5x price (hard) or a spare property of similar value + cash.
-    let cash = Math.round(tile.price * (level === 'hard' ? 1.5 : 1.3));
+    for (const m of missing) {
+      const owner = state.ownership[m]!.owner;
+      const op = findPlayer(state, owner);
+      if (op.bankrupt) continue;
+      // Recently declined by this player? Back off for a while.
+      const declined = state.trades.some(
+        (t) =>
+          t.from === playerId &&
+          t.to === owner &&
+          t.status === 'declined' &&
+          state.turn - t.createdTurn < 20 * (1 - u),
+      );
+      if (declined) continue;
+      const tile = map.tiles[m] as PropertyTile;
+      const score =
+        (tile.price * (missing.length === 1 ? 2 : 1)) / (1 + mine.length === tiles.length - 1 ? 1 : 2);
+      candidates.push({ missing: m, owner, score });
+    }
+  }
+  if (candidates.length === 0) return null;
+  candidates.sort((a, b) => b.score - a.score);
+
+  for (const c of candidates) {
+    const tile = map.tiles[c.missing] as PropertyTile;
+    const other = findPlayer(state, c.owner);
+    const offer: TradeSide = { cash: 0, properties: [], jailCards: 0 };
+    let cash = Math.round(tile.price * mult);
+    // Sweetener: a lone property of mine in a group where they already hold something.
     const spare = ownedTiles(state, playerId).find((i) => {
       const t = map.tiles[i]!;
       if (!isOwnable(t) || state.ownership[i]!.mortgaged) return false;
-      if (
-        t.type === 'property' &&
-        (ownsFullGroup(state, map, playerId, t.group) ||
-          groupTiles(map, t.group).some((k) => (state.ownership[k]?.houses ?? 0) > 0))
-      )
-        return false;
-      if (t.type === 'property') {
-        const gt = groupTiles(map, t.group);
-        if (gt.filter((k) => state.ownership[k]?.owner === playerId).length > 1) return false;
-      }
-      return t.price <= tile.price * 1.2;
+      if (t.type !== 'property') return false;
+      const gt = groupTiles(map, t.group);
+      const mineInGroup = gt.filter((k) => state.ownership[k]?.owner === playerId).length;
+      if (mineInGroup !== 1) return false;
+      const theirs = gt.filter((k) => state.ownership[k]?.owner === other.id).length;
+      if (theirs === 0) return false;
+      // Don't hand them a complete set unless we are desperate.
+      if (theirs === gt.length - 1 && u < 0.5) return false;
+      return gt.every((k) => (state.ownership[k]?.houses ?? 0) === 0);
     });
-    const offer: TradeSide = { cash: 0, properties: [], jailCards: 0 };
     if (spare !== undefined) {
       offer.properties.push(spare);
-      cash = Math.max(0, Math.round(cash - (map.tiles[spare] as OwnableTile).price * 0.8));
+      cash = Math.max(0, Math.round(cash - (map.tiles[spare] as PropertyTile).price * 0.9));
     }
     offer.cash = Math.min(cash, Math.max(0, p.cash - state.rules.salary));
     if (offer.cash + offer.properties.length === 0) continue;
-    if (offer.cash < tile.price * 0.8 && offer.properties.length === 0) continue;
-    const request: TradeSide = { cash: 0, properties: [missing], jailCards: 0 };
+    if (offer.properties.length === 0 && offer.cash < tile.price * 1.05) continue;
+    const request: TradeSide = { cash: 0, properties: [c.missing], jailCards: 0 };
     if (C.checkProposeTrade(state, map, playerId, other.id, offer, request)) continue;
     return { type: 'proposeTrade', playerId, to: other.id, offer, request };
   }

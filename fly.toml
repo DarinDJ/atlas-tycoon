@@ -1,0 +1,35 @@
+# Fly.io config for the game server:  fly launch --no-deploy && fly volumes create gamedata --size 1 && fly deploy
+app = "bharat-tycoon-server"
+primary_region = "bom"
+
+[build]
+  dockerfile = "packages/server/Dockerfile"
+
+[env]
+  PORT = "3001"
+  DB_PATH = "/data/bharat.db"
+  TRUST_PROXY = "true"
+  ANALYTICS_ADAPTER = "noop"
+  STORE_DEV_MODE = "false"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = false
+  min_machines_running = 1
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 4000
+    soft_limit = 3000
+
+[[mounts]]
+  source = "gamedata"
+  destination = "/data"
+
+[checks]
+  [checks.health]
+    port = 3001
+    type = "http"
+    interval = "30s"
+    timeout = "5s"
+    path = "/api/health"

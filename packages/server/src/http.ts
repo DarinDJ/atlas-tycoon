@@ -44,7 +44,9 @@ export function createHttpApp(
 ): Express {
   const app = express();
   app.disable('x-powered-by');
-  const apiLimiter = new RateLimiter(10, 30);
+  if (config.trustProxy) app.set('trust proxy', 1);
+  // Generous: many users share an IP behind NAT/proxies. Abuse is also bounded by socket limits.
+  const apiLimiter = new RateLimiter(40, 120);
   const simLimiter = new RateLimiter(0.2, 2);
   setInterval(() => apiLimiter.sweep(), 60_000).unref();
 

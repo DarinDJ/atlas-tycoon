@@ -33,6 +33,8 @@ export const config = {
   razorpayWebhookSecret: env.RAZORPAY_WEBHOOK_SECRET ?? '',
   adsEnabled: (env.ADS_ENABLED ?? 'false') === 'true',
   publicUrl: env.PUBLIC_URL ?? 'http://localhost:5173',
+  /** Set when running behind a reverse proxy / load balancer so rate limits see real client IPs. */
+  trustProxy: (env.TRUST_PROXY ?? 'false') === 'true',
   isTest: env.NODE_ENV === 'test' || !!env.VITEST,
 };
 
