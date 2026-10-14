@@ -101,11 +101,12 @@ export function describeEvent(
   meId?: string | null,
 ): string | null {
   const t = (key: TKey, params?: Record<string, string | number>) => translate(lang, key, params);
+  // Always use the real name: "you is bankrupt" reads badly and Hindi verbs agree differently.
   const name = (id: string | null | undefined): string => {
     if (!id) return t('app.bank');
-    if (id === meId) return t('app.you');
     return state.players.find((p) => p.id === id)?.name ?? id;
   };
+  void meId;
   const tile = (i: number) => tileName(map, i, lang);
   const m = (n: number) => money(map, n);
   switch (ev.type) {

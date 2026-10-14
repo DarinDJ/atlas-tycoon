@@ -1,6 +1,6 @@
 /**
  * Bot-vs-bot balance simulator.
- *   npm run simulate -- --map india-cities --games 500 --players 4 --levels medium,hard
+ *   npm run simulate -- --map world-cities --games 500 --players 4 --levels medium,hard
  */
 import { runSimulations, type BotLevel } from '@bt/engine';
 import { getMap, listMaps } from '../src/index.js';
@@ -14,7 +14,7 @@ for (let i = 2; i < process.argv.length; i++) {
       process.argv[i + 1] && !process.argv[i + 1]!.startsWith('--') ? process.argv[++i]! : 'true',
     );
 }
-const mapId = args.get('map') ?? 'india-cities';
+const mapId = args.get('map') ?? 'world-cities';
 const map = getMap(mapId);
 if (!map) {
   console.error(

@@ -62,18 +62,22 @@ export const PLAYER_COLORS = [
   '#d6409b',
 ];
 const BOT_NAMES = [
-  'Arjun',
   'Sofia',
   'Kenji',
   'Amara',
   'Lucas',
-  'Priya',
   'Mateo',
   'Zoe',
   'Omar',
   'Hana',
   'Diego',
   'Nia',
+  'Leo',
+  'Mia',
+  'Yuki',
+  'Noah',
+  'Elena',
+  'Kofi',
 ];
 const MAX_CHAT = 100;
 

@@ -5,7 +5,7 @@ export const worldCities: MapDefinition = {
   schema: 1,
   id: 'world-cities',
   name: 'World Cities',
-  tagline: 'Buy Singapore, build in Paris, bankrupt your friends in New York.',
+  tagline: 'Buy Rio, build in Tokyo, bankrupt your friends in New York.',
   country: 'World',
   region: 'Global',
   flag: '🌍',
@@ -39,7 +39,7 @@ export const worldCities: MapDefinition = {
   seo: {
     title: 'Play Atlas Tycoon: World Cities – free online board game',
     description:
-      'A free multiplayer property-trading board game across the great cities of the world. Buy Paris and Singapore, build hotels in London and New York, and play with friends on your phone.',
+      'A free multiplayer property-trading board game across the great cities of the world. Buy Cairo and Rio, build hotels in Paris and Tokyo, and play with friends on any device, no signup.',
     keywords: [
       'world board game',
       'online monopoly alternative',

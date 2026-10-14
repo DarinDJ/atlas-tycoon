@@ -12,7 +12,7 @@ test.describe('Atlas Tycoon', () => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Atlas Tycoon');
     await expect(page.getByTestId('map-india-cities')).toBeVisible();
-    await expect(page.getByTestId('map-india-heritage')).toBeVisible();
+    await expect(page.getByTestId('map-europe-tour')).toBeVisible();
   });
 
   test('map landing page is SEO friendly', async ({ page }) => {

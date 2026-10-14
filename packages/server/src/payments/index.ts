@@ -48,11 +48,11 @@ export const PRODUCTS: Product[] = [
   {
     sku: 'cosmetic-royal',
     kind: 'cosmetic',
-    name: 'Royal token set',
-    description: 'Elephant, peacock and lotus tokens with gold dice.',
+    name: 'Royal pawn set',
+    description: 'Crowned, neon and gold pawn finishes plus gold dice.',
     priceInr: 4900,
     priceUsd: 99,
-    grants: ['token-elephant', 'token-peacock', 'token-lotus', 'dice-gold'],
+    grants: ['pawn-crown', 'pawn-neon', 'pawn-gold', 'dice-gold'],
   },
   {
     sku: 'theme-midnight',

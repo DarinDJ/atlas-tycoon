@@ -28,7 +28,7 @@ export default function Leaderboard() {
         </Link>
       </nav>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-black">🏆 {t('home.leaderboard')}</h1>
+        <h1 className="shrink-0 text-2xl font-black">🏆 {t('home.leaderboard')}</h1>
         <select
           className="input w-auto"
           value={mapId}

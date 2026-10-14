@@ -1,12 +1,12 @@
 # Atlas Tycoon
 
 A free, no-signup, multiplayer property-trading board game for the browser, in the spirit of richup.io.
-2–8 players (or bots), every map is a real place, and the launch map is **India – Cities**.
+2–8 players (or bots), and every map is a real place: World Cities is the default, with Europe, USA, UK and an India map alongside.
 
 - **Engine**: pure, deterministic TypeScript reducer with seeded RNG, 89 unit tests, bot AI, and a bot-vs-bot balance simulator.
 - **Server**: Node + socket.io, fully authoritative (clients only send intents), rooms with share codes, reconnection, turn timers, AFK → bot takeover, vote-kick, chat with profanity filter, rate limiting, SQLite persistence (Node's built-in `node:sqlite`, no native build).
 - **Web**: React + Vite + Tailwind + Framer Motion + Zustand, installable PWA, mobile-first, English + Hindi, map editor with balance simulator, store/ads/analytics plumbing, Playwright e2e.
-- **Maps**: India Cities, India Heritage & Tourism, World Cities, USA Cities (premium), UK Cities (premium). Adding a map is one data file.
+- **Maps**: World Cities, Europe Grand Tour, India Cities (free), USA Cities and UK Cities (premium packs). Each colour group is one country/state/region. Adding a map is one data file.
 
 Rename the game in `packages/web/src/config/brand.ts` (plus `index.html` and the PWA manifest in `vite.config.ts`).
 
@@ -36,7 +36,7 @@ Other commands:
 | `npm run test:e2e` | Playwright: full bot game, two-browser room, store, editor (`npx playwright install chromium` first) |
 | `npm run lint` / `npm run typecheck` / `npm run format` | ESLint, tsc, Prettier |
 | `npm run validate-maps` | schema + semantic validation and static balance report for every map |
-| `npm run simulate -- --map india-cities --games 500 --players 4 --levels medium,hard` | bot-vs-bot simulator (≈0.3 s/game) |
+| `npm run simulate -- --map world-cities --games 500 --players 4 --levels medium,hard` | bot-vs-bot simulator (≈0.3 s/game) |
 | `npm run loadtest -w @bt/server -- --rooms 300` | spin up N bot rooms against a running server |
 | `npm run export -w @bt/maps` | dump every map as JSON (for the editor / CDN) |
 
@@ -133,7 +133,7 @@ Measured on a laptop with `npm run loadtest -w @bt/server` (one human socket + 3
 ## Monetization & growth hooks
 
 - Ads: `AdSlot` component (home, lobby, results only) behind `ADS_ENABLED` + consent + no-ads entitlement. Drop the AdSense/AdMob tag in `AdSlot.tsx`.
-- Store: map packs, cosmetics, supporter pass; Razorpay (UPI) + Stripe adapters; entitlements per guest id.
+- Store: map packs, cosmetics, supporter pass; Stripe (cards, global) + Razorpay (UPI, India) adapters; entitlements per guest id.
 - Analytics: pluggable adapter (`console`, `noop`, `http`) on the server; client posts to `/api/analytics`.
 - Share: WhatsApp invite links in the lobby, shareable PNG result card, `/play/<map>` landing pages with meta tags + JSON-LD, leaderboards, daily challenges.
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { BRAND } from '../config/brand';
 import { AVATARS, PLAYER_COLORS, TOKENS, isUnlocked } from '../config/cosmetics';
 import { Pawn } from '../components/Pawn';
@@ -85,9 +85,10 @@ export default function Home() {
   const t = useT();
   const lang = useI18n((s) => s.lang);
   const nav = useNavigate();
+  const [params] = useSearchParams();
   const [profile, setProfile] = useState<Profile>(getProfile);
   const [config, setConfig] = useState<AppConfig | null>(null);
-  const [mapId, setMapId] = useState('world-cities');
+  const [mapId, setMapId] = useState(params.get('map') ?? 'world-cities');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -315,7 +316,7 @@ export default function Home() {
               <ul className="mt-1 text-xs opacity-80">
                 <li>Play 3 games: {Math.min(3, daily.games ?? 0)}/3</li>
                 <li>Win a game: {Math.min(1, daily.wins ?? 0)}/1</li>
-                <li>Play India – Heritage: {Math.min(1, daily['map:india-heritage'] ?? 0)}/1</li>
+                <li>Play Europe – Grand Tour: {Math.min(1, daily['map:europe-tour'] ?? 0)}/1</li>
               </ul>
             </div>
           )}

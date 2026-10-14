@@ -51,8 +51,8 @@ export default function Store() {
               <p className="flex-1 text-sm opacity-70">{p.description}</p>
               <div className="flex items-center justify-between">
                 <span className="font-bold tabular-nums">
-                  ₹{(p.priceInr / 100).toFixed(0)}{' '}
-                  <span className="text-xs opacity-60">/ ${(p.priceUsd / 100).toFixed(2)}</span>
+                  ${(p.priceUsd / 100).toFixed(2)}{' '}
+                  <span className="text-xs opacity-60">/ ₹{(p.priceInr / 100).toFixed(0)}</span>
                 </span>
                 {owned(p) ? (
                   <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-bold text-emerald-400">
@@ -66,7 +66,7 @@ export default function Store() {
                         disabled={!!busy}
                         onClick={() => void buy(p.sku, 'razorpay')}
                       >
-                        {t('store.buy')} (UPI)
+                        {t('store.buy')} (UPI / cards)
                       </button>
                     )}
                     {providers.includes('stripe') && (

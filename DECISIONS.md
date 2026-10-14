@@ -29,7 +29,7 @@ Running record of product/engineering decisions made autonomously while building
 ## Maps
 - India amounts are stored in **lakhs** and formatted as `₹60 L` / `₹1.5 Cr`; starting cash ₹15 Cr. Other maps use plain currency.
 - All five maps reuse the same rent/price tables by board position so balance work transfers; names, cards, art and theme are per map.
-- India Cities utilities are Power Grid and Telecom Tower (water appears on the Heritage map) because the standard board only has two utility slots.
+- India Cities utilities are Power Grid and Telecom Tower because the standard board only has two utility slots.
 - Premium maps (USA, UK) can be *joined* by anyone; only *creating* a room with them needs an entitlement.
 
 ## Monetization
@@ -43,3 +43,7 @@ Running record of product/engineering decisions made autonomously while building
 - **Pawns are the player's avatar on a disc in the player's colour**; "token" cosmetics became pawn shapes/finishes. Ownership on tiles is a solid colour strip plus the owner's mini pawn instead of a faint tint.
 - **Default theme is dark ("night")** with light board tiles; all UI colours are theme variables.
 - **Trade dialog** is a fixed-height two-column layout (give | get) with cash sliders and property chips so both sides fit one laptop screen.
+
+## 2026-10-14 feedback round
+- **One India map only.** The Heritage & Tourism map was removed; India Cities stays as the single free India-themed map. Replaced by **Europe – Grand Tour** (free, one country per colour group).
+- Bot names, store cosmetics and marketing copy are culture-neutral. Hindi remains available as a UI language (it is localisation, not theming); Razorpay stays as an optional payment adapter for Indian players.

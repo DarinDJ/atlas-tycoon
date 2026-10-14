@@ -18,9 +18,9 @@ export const TOKENS: Cosmetic[] = [
   { id: 'hex', name: 'Hex', glyph: '⬢' },
   { id: 'badge', name: 'Badge', glyph: '✪' },
   { id: 'ring', name: 'Ring', glyph: '◎' },
-  { id: 'gold', name: 'Gold finish', glyph: '◉', premium: 'dice-gold' },
-  { id: 'crown', name: 'Crowned', glyph: '♛', premium: 'token-lotus' },
-  { id: 'neon', name: 'Neon glow', glyph: '✦', premium: 'token-peacock' },
+  { id: 'gold', name: 'Gold finish', glyph: '◉', premium: 'pawn-gold' },
+  { id: 'crown', name: 'Crowned', glyph: '♛', premium: 'pawn-crown' },
+  { id: 'neon', name: 'Neon glow', glyph: '✦', premium: 'pawn-neon' },
 ];
 
 export const AVATARS: Cosmetic[] = [

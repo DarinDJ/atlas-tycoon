@@ -30,7 +30,7 @@ export const en = {
   'home.subtitle':
     'Buy the world city by city, build hotels, bankrupt your friends. Free, no signup, 2–8 players.',
   'home.yourName': 'Your name',
-  'home.namePlaceholder': 'e.g. Arjun',
+  'home.namePlaceholder': 'e.g. Alex',
   'home.avatar': 'Avatar',
   'home.token': 'Token',
   'home.createRoom': 'Create room',

@@ -42,7 +42,7 @@ async function spawn(i: number): Promise<void> {
     name: `Load${i}`,
     avatar: 'tiger',
     token: 'auto',
-    mapId: 'india-cities',
+    mapId: 'world-cities',
     rules: { isPrivate: true, fillWithBots: 'medium', maxPlayers: 4, turnTimerSeconds: 5 },
   });
   if (!created.ok) {
