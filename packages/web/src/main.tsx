@@ -49,22 +49,25 @@ function Shell() {
   );
 }
 
-const router = createBrowserRouter([
-  {
-    element: <Shell />,
-    children: [
-      { path: '/', element: <Home /> },
-      { path: '/room/:code', element: <RoomPage /> },
-      { path: '/play/:mapId', element: <MapLanding /> },
-      { path: '/editor', element: <Editor /> },
-      { path: '/store', element: <Store /> },
-      { path: '/store/success', element: <Store /> },
-      { path: '/leaderboard', element: <Leaderboard /> },
-      { path: '/how-to-play', element: <HowToPlay /> },
-      { path: '*', element: <Home /> },
-    ],
-  },
-]);
+const router = createBrowserRouter(
+  [
+    {
+      element: <Shell />,
+      children: [
+        { path: '/', element: <Home /> },
+        { path: '/room/:code', element: <RoomPage /> },
+        { path: '/play/:mapId', element: <MapLanding /> },
+        { path: '/editor', element: <Editor /> },
+        { path: '/store', element: <Store /> },
+        { path: '/store/success', element: <Store /> },
+        { path: '/leaderboard', element: <Leaderboard /> },
+        { path: '/how-to-play', element: <HowToPlay /> },
+        { path: '*', element: <Home /> },
+      ],
+    },
+  ],
+  { basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/' },
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

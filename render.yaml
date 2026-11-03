@@ -1,15 +1,13 @@
+# Render Blueprint. Free tier: no disk (leaderboard resets on redeploy), spins down after 15 min idle.
+# Upgrade to plan: starter and add the disk block back for persistent data.
 services:
   - type: web
     name: atlas-tycoon-server
     runtime: docker
     dockerfilePath: packages/server/Dockerfile
-    plan: starter
-    region: singapore
+    plan: free
+    region: frankfurt
     healthCheckPath: /api/health
-    disk:
-      name: gamedata
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: PORT
         value: 3001
@@ -17,7 +15,18 @@ services:
         value: /data/atlas.db
       - key: TRUST_PROXY
         value: "true"
+      - key: ANALYTICS_ADAPTER
+        value: noop
+      - key: STORE_DEV_MODE
+        value: "false"
+      - key: CONNECT_RATE_PER_IP
+        value: "10"
       - key: CORS_ORIGINS
-        sync: false
+        value: https://darindj.github.io
       - key: PUBLIC_URL
-        sync: false
+        value: https://darindj.github.io/atlas-tycoon
+# Persistent option (paid):
+#    disk:
+#      name: gamedata
+#      mountPath: /data
+#      sizeGB: 1
