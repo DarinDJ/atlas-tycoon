@@ -101,7 +101,7 @@ Amounts are plain integers; the `currency.style` decides formatting (`indian-lak
 ### Free option: GitHub Pages (web) + Render free tier (server)
 
 1. Push the repo to GitHub (public, so Pages is free) and enable **Settings → Pages → Source: GitHub Actions**. The workflow `.github/workflows/pages.yml` builds the web app under `/<repo-name>/` and deploys it on every push to `main`.
-2. Create the server on Render: **New → Blueprint**, pick the repo; `render.yaml` describes a free web service (no disk: leaderboard resets on redeploy, and the service sleeps after 15 min idle, so the first visit takes ~30 s). Note the URL, e.g. `https://atlas-tycoon-server.onrender.com`.
+2. Create the server on Render: [one-click Blueprint deploy](https://render.com/deploy?repo=https://github.com/DarinDJ/atlas-tycoon) (or dashboard **New → Blueprint**, pick the repo); `render.yaml` describes a free web service (no disk: leaderboard resets on redeploy, and the service sleeps after 15 min idle, so the first visit takes ~30 s). Note the URL, e.g. `https://atlas-tycoon-server.onrender.com`.
 3. In GitHub **Settings → Secrets and variables → Actions → Variables**, add `API_URL` = that Render URL, then re-run the Pages workflow. Set `CORS_ORIGINS`/`PUBLIC_URL` in `render.yaml` (or Render's dashboard) to your Pages URL, e.g. `https://<user>.github.io` and `https://<user>.github.io/<repo>`.
 
 The game is then playable at `https://<user>.github.io/<repo>/`. Move to the paid options below when you want persistence and no cold starts.
