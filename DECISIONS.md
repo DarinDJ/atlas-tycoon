@@ -47,3 +47,7 @@ Running record of product/engineering decisions made autonomously while building
 ## 2026-10-14 feedback round
 - **One India map only.** The Heritage & Tourism map was removed; India Cities stays as the single free India-themed map. Replaced by **Europe – Grand Tour** (free, one country per colour group).
 - Bot names, store cosmetics and marketing copy are culture-neutral. Hindi remains available as a UI language (it is localisation, not theming); Razorpay stays as an optional payment adapter for Indian players.
+
+## 2026-11-04 first public deployment (free tier)
+- **Web on GitHub Pages**, server on **Render free** (`atlas-tycoon-server`, Frankfurt, Docker). The Render service was created through Render's API with the same settings as `render.yaml`, so it is not linked to the Blueprint: change env vars in the Render dashboard, not in the YAML. The Pages build reads the server URL from the repo variable `API_URL`.
+- Free-tier trade-offs accepted for now: the server sleeps after 15 min idle (first visit takes ~30–60 s) and the SQLite file lives on ephemeral disk, so the leaderboard resets on redeploy. Moving to a paid host later needs no code changes.
